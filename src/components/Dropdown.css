@@ -1,0 +1,52 @@
+.Dropdown {
+  display: none;
+  background-color: black;
+  color: white;
+  position: absolute;
+  right: 0px;
+  width: 400px;
+  height: 510px;
+  z-index: 10;
+}
+
+@media (max-width: 460px) {
+  .ProfileDropdown {
+    width: 150px;
+  }
+}
+
+@media (max-width: 430px) {
+  .Dropdown {
+    width: 375px;
+  }
+}
+
+.Dropdown-title {
+  font-size: 1.2rem;
+  margin: 8px;
+}
+
+.Dropdown-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.Dropdown-actions {
+  border-top: 1px solid #DFDFDF;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.Dropdown-actions button {
+  font-size: 1rem;
+  background-color: #444;
+  color: white;
+  border: 1px solid #DFDFDF;
+  padding: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+}

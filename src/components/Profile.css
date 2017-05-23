@@ -1,0 +1,199 @@
+/*Profile*/
+
+.Profile {
+  width: 300px;
+  position: relative;
+}
+@media (max-width: 460px) {
+  .ProfileDropdown {
+    width: 150px;
+  }
+}
+
+/*ProfileBadge*/
+
+
+.ProfileBadge {
+  color: white;
+  padding: 8px 20px 8px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.ProfileBadge:hover {
+  background-color: #444;
+}
+
+.ProfileBadge img {
+  height: 2.6rem;
+  width: 2.6rem;
+  border-radius: 180px;
+  margin-right: 0.5rem;
+}
+
+.ProfileBadge-textblock {
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 430px) {
+  .Profile>.ProfileBadge {
+    padding: 0px;
+  }
+  .Profile {
+    width: 80px;
+  }
+  .Profile>.ProfileBadge>.ProfileBadge-textblock {
+    display: none;
+  }
+}
+
+.ProfileBadge h5 {
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: oblique;
+  margin: 0px;
+}
+
+.ProfileBadge h6 {
+  font-size: 1rem;
+  margin: 0px;
+}
+
+.ProfileButton button {
+  visibility: hidden;
+  font-size: 0.8rem;
+  font-weight: 600;
+  right: 30px;
+  cursor: pointer;
+  background-color: red;
+  color: white;
+  border: 0px;
+  height: 57px;
+  margin: 0 10px 0 0px;
+  width: 70px;
+}
+
+.ProfileButton:hover button {
+  visibility: visible;
+}
+
+/*ProfileButton*/
+
+.ProfileButton {
+  border-top: 1px solid #DFDFDF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.ProfileButton:hover {
+  background-color: #444;
+}
+
+/*ProfileDropdown*/
+
+.ProfileDropdown {
+  display: none;
+  background-color: black;
+  color: white;
+  position: absolute;
+  right: 0px;
+  width: 400px;
+  height: 510px;
+  z-index: 10;
+}
+@media (max-width: 430px) {
+  .ProfileDropdown {
+    width: 375px;
+  }
+}
+
+.ProfileDropdown:hover {
+  display: block;
+}
+
+.ProfileBadge:hover + .ProfileDropdown {
+  display: block;
+}
+
+.ProfileDropdown-title {
+  font-size: 1.2rem;
+  margin: 8px;
+}
+
+.ProfileDropdown-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ProfileDropdown-actions {
+  border-top: 1px solid #DFDFDF;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.ProfileDropdown-actions button {
+  font-size: 1rem;
+  background-color: #444;
+  color: white;
+  border: 1px solid #DFDFDF;
+  padding: 8px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/*SelectProfile*/
+
+.SelectProfile-list {
+  height: 100%;
+  overflow: scroll;
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.SelectProfile-list .ProfileButton .ProfileBadge {
+  width: 300px;
+}
+
+/*AddProfile*/
+
+.AddProfile-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.AddProfile-input input {
+  font-size: 1rem;
+  padding: 5px;
+  border: 0px;
+  width: 90%;
+  margin: 5px;
+  margin-bottom: 25px;
+  border-radius: 5px;
+}
+
+.AddProfile-input p {
+  margin: 4px;
+  margin-top: 5px;
+  text-align: left;
+  font-weight: bold;
+  padding-left: 25px;
+  width: 100%;
+}
+
+.AddProfile-fail {
+  color: white;
+  background-color: red;
+  margin: 0px !important;
+  padding: 10px 0 10px 0 !important;
+  text-align: center !important;
+  width: 100%;
+}

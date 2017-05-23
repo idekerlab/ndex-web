@@ -1,0 +1,128 @@
+
+.Save {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.Save-title {
+  color: white;
+  font-size: 2rem;
+  font-weight: 300;
+  padding: 0px;
+  margin: 0px;
+}
+
+.Save-entryfields {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.Save-left {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Save-labelfield {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.Save-labelfield label {
+  text-align: start;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  color: #777;
+  width: 90%;
+  height: 25px;
+}
+
+.Save-labelfield input {
+  font-size: 1rem;
+  width: 90%;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid #DDD;
+  padding: 10px;
+}
+
+.Save-textareafield {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.Save-textareafield label {
+  text-align: start;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  color: #777;
+  width: 90%;
+  height: 25px;
+}
+
+.Save-textareafield textarea {
+  width: 90%;
+  height: 100%;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #DDD;
+  padding: 10px;
+}
+
+.Save-right {
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Save-actionbar {
+  background-color: black;
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.Save-actionbar input {
+  width: 100%;
+  font-size: 1rem;
+  border: 0;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  padding: 10px;
+  margin: 5px 10px 5px 20px;
+}
+
+.Save-actionbar button {
+  font-size: 1.4rem;
+  width: 100px;
+  background-color: #444;
+  color: white;
+  border: 1px solid #DFDFDF;
+  padding: 4px;
+  margin: 5px 20px 5px 0px;
+}

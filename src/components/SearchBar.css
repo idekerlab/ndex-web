@@ -1,0 +1,71 @@
+.Search {
+  position: relative;
+  width: 100%;
+  padding: 10px 10px 10px 10px;
+  height: 40px;
+  display: flex;
+}
+
+.SearchBar {
+  font-size: 16px;
+  padding: 6px 15px 6px 35px;
+  border: 1px solid #DFDFDF;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.SearchBar-dropdown {
+  display: none;
+  background-color: black;
+  color: white;
+  overflow: auto;
+  position: absolute;
+  top: 60px;
+  left: 0px;
+  width: 400px;
+  height: 510px;
+  z-index: 10;
+}
+@media (max-width: 430px) {
+  .SearchBar-dropdown {
+    width: 375px;
+  }
+}
+
+.SearchBar:focus + .SearchBar-dropdown  {
+  display: block;
+}
+
+.SearchBar-dropdown-list-title {
+  font-size: 1.2rem;
+  margin: 8px;
+}
+
+.SearchBar-dropdown-list {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.SearchBar-dropdown-list-item {
+  border-top: 1px solid #DFDFDF;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.SearchBar-dropdown-list-item:hover {
+  background-color: #444;
+}
+
+
+.SearchBar-dropdown-list-text {
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: oblique;
+  margin: 0px;
+}
+
+.SearchBar-dropdown-list-subtext {
+  font-size: 1rem;
+  margin: 0px;
+}

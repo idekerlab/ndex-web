@@ -1,0 +1,65 @@
+
+
+
+.Toolbar {
+  height: 45px;
+  border: 1px solid lightgrey;
+  border-width: 0.5px 0px 0.5px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 10px;
+}
+
+.Toolbar-view-buttons button
+ {
+  cursor: pointer;
+  font-size: 1rem;
+  height: 35px;
+  background-color: white;
+  border: 1px solid #DFDFDF;
+  border-radius: 8px 0 0 8px;
+  padding: 0 10px 0 10px;
+}
+
+.Toolbar-view-buttons .selected {
+  color: #666666;
+  background-color: #e5f1fb;
+}
+
+.Toolbar-view-buttons button:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.Toolbar-view-buttons button:last-child {
+  border-left: 0px;
+  border-radius: 0 8px 8px 0;
+}
+
+.Toolbar-view-button button.btn-group button:not(:last-child) {
+    border-right: none; /* Prevent double borders */
+}
+
+.Toolbar-sort {
+  height: 35px;
+  font-size: 1rem;
+  border: 1px solid #DFDFDF;
+  border-radius: 8px;
+  margin: 3px;
+}
+
+.Toolbar-filter {
+  width: 280px;
+  height: 21px;
+  font-size: 1rem;
+  padding: 6px 15px 6px 15px;
+  border: 1px solid #DFDFDF;
+  border-radius: 8px;
+  margin: 3px;
+}
+
+@media (max-width: 615px) {
+  .Toolbar-filter {
+    display: none;
+  }
+}

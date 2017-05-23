@@ -1,0 +1,53 @@
+.Table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  background-color: white;
+}
+
+.Table-checkbox {
+  width: 1%;
+}
+
+.Table-header th {
+  font-size: 1rem;
+  padding: 10px 10px 5px 10px;
+  text-align: left;
+}
+
+.Table-download {
+  font-size: 0.9rem;
+  color: black;
+  background-color: #e5f1fb;
+  border-radius: 5px;
+  border: 0px;
+  width: 60px;
+  height: 25px;
+  margin: 0;
+}
+
+.Table-row:nth-child(even) {
+  background-color: white;
+}
+
+.Table-row:nth-child(odd) {
+  background-color: lightgrey;
+}
+
+.Table-row td {
+  font-size: 1rem;
+  padding: 10px;
+  text-align: left;
+}
+
+@media (max-width: 1250px) {
+  .Table-header {
+    font-size: 0.6rem;
+  }
+  .Table-download {
+    font-size: 0.5rem;
+  }
+  .Table-row td {
+    font-size: 0.6rem;
+  }
+}

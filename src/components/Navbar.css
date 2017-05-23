@@ -1,0 +1,16 @@
+.Navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: black;
+  height: 60;
+  padding: 5px 0px 5px 0px;
+}
+
+@media (max-width: 600px) {
+  .Navbar-logo {
+    display: none;
+  }
+}
+
+

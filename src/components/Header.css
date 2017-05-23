@@ -1,0 +1,25 @@
+
+.Header {
+  padding: 8px;
+}
+
+.Header-title {
+  font-size: 1.6rem;
+  margin: 0px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Header-subtitle {
+  font-size: 1.2rem;
+  margin: 0px;
+}
+
+@media (max-width: 640px) {
+  .Header-title {
+    font-size: 1.2rem;
+  }
+  .Header-subtitle {
+    font-size: 1rem;
+  }
+}
