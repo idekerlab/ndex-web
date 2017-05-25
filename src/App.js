@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import './App.css'
 
 import Save from './containers/Save'
+import Choose from './containers/Choose'
 
 class App extends Component {
 
@@ -10,8 +11,8 @@ class App extends Component {
     this.state = {
       component: 'loading',
       parameters: {},
-      profiles: [],
-      selectedProfile: {}
+      profiles: JSON.parse(window.localStorage.getItem('profiles')) || [],
+      selectedProfile: JSON.parse(window.localStorage.getItem('selectedProfile')) || {},
     }
     this.loadComponentConfig()
   }
@@ -36,6 +37,7 @@ class App extends Component {
 
   handleProfileSelect = (profile) => {
     this.setState({selectedProfile: profile})
+    window.localStorage.setItem('selectedProfile', JSON.stringify(profile))
   }
 
   handleProfileAdd = (profile) => {
@@ -46,12 +48,13 @@ class App extends Component {
       profiles: this.state.profiles,
       selectedProfile: profile
     })
+    window.localStorage.setItem('profiles', JSON.stringify(this.state.profiles))
   }
 
   handleProfileDelete = (profile) => {
-    this.setState({
-      profiles: this.state.profiles.filter((p) => p !== profile)
-    })
+    const profiles = this.state.profiles.filter((p) => p !== profile)
+    this.setState({ profiles })
+    window.localStorage.setItem('profiles', JSON.stringify(profiles))
   }
 
   handleProfileLogout = () => {
@@ -60,6 +63,7 @@ class App extends Component {
         selectedProfile: {},
       })
     }
+    window.localStorage.setItem('selectedProfile', '{}')
   }
 
   render() {
@@ -93,7 +97,5 @@ class App extends Component {
 const Error = () => <div>AN ERROR OCCURED. PLEASE CLOSE THIS WINDOW AND TRY AGAIN.</div>
 
 const Loading = () => <div>LOADING</div>
-
-const Choose = () => <div>CHOOSE</div>
 
 export default App

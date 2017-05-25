@@ -96,25 +96,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+ }
+
+.Save-visibility {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Save-visibility h3 {
+  margin: 10px 5px 10px 5px;
+}
+
+.Save-visibility input {
+  transform: scale(1.2);
 }
 
 .Save-actionbar {
-  background-color: black;
   height: 60px;
   width: 100%;
   display: flex;
   align-items: center;
+  background-color: black;
+  border-top: 2px solid #DDD;
+}
+
+.Save-actionbar h5 {
+  width: 270px;
+  font-size: 1.3rem;
+  color: white;
+  padding: 0;
+  margin: 3px;
 }
 
 .Save-actionbar input {
   width: 100%;
   font-size: 1rem;
   border: 0;
-  border-radius: 10px;
-  background-color: white;
   color: black;
-  padding: 10px;
-  margin: 5px 10px 5px 20px;
+  padding: 5px 15px 5px 15px;
+  margin: 5px 10px 5px 0px;
 }
 
 .Save-actionbar button {
@@ -123,6 +144,6 @@
   background-color: #444;
   color: white;
   border: 1px solid #DFDFDF;
-  padding: 4px;
-  margin: 5px 20px 5px 0px;
+  padding: 4px 10px 4px 10px;
+  margin: 5px 10px 5px 0px;
 }

@@ -8,13 +8,20 @@ class Save extends Component {
 
   constructor(props) {
     super(props)
+    const hydrate = (field) => this.props[field] || ''
     this.state = {
-      name: this.hydrateFromProps('name')
+      name: this.props.name,
+      author: hydrate('author'),
+      organism: hydrate('organism'),
+      disease: hydrate('disease'),
+      tissue: hydrate('tissue'),
+      rightsHolder: hydrate('rightsHolder'),
+      rights: hydrate('rights'),
+      references: hydrate('references'),
+      description: hydrate('description'),
+      uuid: hydrate('uuid'),
+      public: false
     }
-  }
-
-  hydrateFromProps(field) {
-    return this.props[field] || ''
   }
 
   onSave() {
@@ -23,17 +30,36 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
-    fetch('http://localhost:1234/cyndex2/v1/networks/' + this.props.suid, {
-      method: 'POST',
-      body: JSON.stringify({
+    const payload = JSON.stringify({
         userId: userName,
         password: password,
-        serverUrl: serverAddress,
-        uuid: '',
-        metadata: {},
-        isPublic: true,
-      })
+        serverUrl: serverAddress + '/v2',
+        uuid: this.state.uuid,
+        metadata: this.state,
+        isPublic: this.state.public,
+     })
+    fetch('http://localhost:1234/cyndex2/v1/networks/current', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: payload
     })
+      .then((blob) => blob.json())
+      .then((resp) => {
+        console.log("Save response")
+        console.log(resp)
+      })
+
+  }
+  
+  handleChangeName(e) {
+    this.setState({ name: e.target.value })
+  }
+
+  handleChangeVisibility(e) {
+    this.setState({ public: !this.state.public })
   }
 
   handleFieldChange(field) {
@@ -80,12 +106,32 @@ class Save extends Component {
           </div>
           <div className="Save-right">
             <TextareaField label="Description"/>
+            <div className="Save-visibility">
+              <h3>Save as Public?</h3>
+              <input
+                 type="checkbox"
+                 value={this.state.public}
+                 onChange={(e) => this.handleChangeVisibility(e)}
+              />
+            </div>
           </div>
         </div>
         <div className="Save-actionbar">
-          <input type="text" placeholder="Network name..."/>
-          <button>Cancel</button>
-          <button>Save</button>
+          <h5 className="Save-actionbar-label">
+            Network Name:
+          </h5>
+          <input
+             type="text"
+             placeholder="Network name..."
+             value={this.state.name}
+             onChange={(e) => this.handleChangeName(e)}
+          />
+          <button>
+            Cancel
+          </button>
+          <button onClick={() => this.onSave()}>
+           Save
+          </button>
         </div>
       </div>
     )
