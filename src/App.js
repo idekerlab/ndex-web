@@ -21,7 +21,6 @@ class App extends Component {
     fetch('http://localhost:1234/cyndex2/v1/status')
       .then((blob) => blob.json())
       .then((resp) => {
-        console.log(resp)
         if (resp.errors.length !== 0) {
           this.setState({
             component: 'error'
@@ -41,8 +40,6 @@ class App extends Component {
   }
 
   handleProfileAdd = (profile) => {
-    console.log("Called add")
-    console.log(profile)
     this.state.profiles.push(profile)
     this.setState({
       profiles: this.state.profiles,

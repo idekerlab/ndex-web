@@ -16,7 +16,7 @@ const Toolbar = ({
       <div>
         <SortSelector
           sorts={sorts}
-          sortsFilter={(sort) => sort != "_id" && sort != "description"}
+          sortsFilter={(sort) => sort !== "_id" && sort !== "description"}
           selectedSort={selectedSort}
           onSortSelect={onSortSelect}
         />
@@ -33,7 +33,7 @@ const ViewButtonCluster = ({views, selectedView, onViewSelect}) => (
   <div className="Toolbar-view-buttons">
     {views.map((view, index) =>
       <button
-        className={selectedView == view ? "selected": ""}
+        className={selectedView === view ? "selected": ""}
         key={index}
         onClick={()=>onViewSelect(view)}
         >

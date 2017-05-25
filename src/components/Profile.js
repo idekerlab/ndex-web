@@ -26,7 +26,6 @@ class Profile extends Component {
       profiles, selectedProfile,
       onProfileAdd, onProfileSelect, onProfileDelete, onProfileLogout
     } = this.props
-    console.log(this.props)
     return (
       <div className="Profile">
         <ProfileBadge profile={selectedProfile}/>

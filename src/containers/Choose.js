@@ -14,7 +14,7 @@ class Choose extends Component {
     this.state = {
       searchTerm: this.props.searchTerm,
       numNetworks: 0,
-      networks: []
+      networks: [],
       pending: [],
       comppleted: [],
       exampleTerms: [
@@ -45,18 +45,21 @@ class Choose extends Component {
         }
       ]
     }
+    this.search()
   }
 
   search(term = undefined) {
-    const searchTerm = this.state.searchTerm
-    const selectedProfile = this.props.selectedProfile
-    if (term != undefined) {
+    let searchTerm = this.state.searchTerm
+    let selectedProfile = this.props.selectedProfile
+    if (term !== undefined) {
       searchTerm = term
     }
-    console.log("Searching for " + searchTerm)
     let headers = { 'Content-Type': 'application/json'}
-    if (Object.keys(selectedProfile).length != 0) {
+    if (Object.keys(selectedProfile).length !== 0) {
       headers['Authorization'] = 'Basic ' + btoa(selectedProfile.userName + ':' + selectedProfile.password)
+    }
+    if (selectedProfile.serverAddress === undefined) {
+      selectedProfile = { serverAddress: "http://ndexbio.org" }
     }
     fetch(selectedProfile.serverAddress + '/v2/search/network?size=200', {
       method: 'POST',
@@ -87,8 +90,9 @@ class Choose extends Component {
     })
   }
 
-  handleSearctermChange() {
-    console.log("Searchterm changed")
+  handleSearchtermChange(term) {
+    this.setState({ searchTerm: term })
+    this.search(term)
   }
 
   handleDownloadNetwork(networkId) {
@@ -104,15 +108,21 @@ class Choose extends Component {
       handleProfileDelete,
       handleProfileLogout
     } = this.props
+    const {
+      searchTerm,
+      numNetworks,
+      networks,
+      exampleTerms
+    } = this.state
     const headerSuffix = searchTerm ? "for " + searchTerm : ""
-    const subtitle = numNetworks > 200 ? "SHowing 200 out of " : ""
+    const subtitle = numNetworks > 200 ? "Showing 200 out of " : ""
     return (
       <div className="Choose">
         <Navbar>
           <SearchBar
             searchterm={searchTerm}
             exampleTerms={exampleTerms}
-            onSearchtermChange={() => this.handleSearchtermChange()}
+            onSearchtermChange={(term) => this.handleSearchtermChange(term)}
           />
           <Profile
             profiles={profiles}
@@ -135,3 +145,5 @@ class Choose extends Component {
     )
   }
 }
+
+export default Choose

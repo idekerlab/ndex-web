@@ -11,8 +11,7 @@ const Dropdown = ({title, content, actions}) => (
       <DropdownActions>
         {actions}
       </DropdownActions>
-    </DropdownContent>
-  </div>
+    </DropdownContent> </div>
 )
 
 const DropdownTitle = ({title}) => (
@@ -32,7 +31,7 @@ const DropdownActions = ({children}) => (
 )
 
 export const DropdownAction = ({label, onClick}) => (
-  <button onClick={onClick}>{label}</button>
+  <button key={label} onClick={onClick}>{label}</button>
 )
 
 export default Dropdown

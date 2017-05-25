@@ -2,7 +2,7 @@ import React from 'react'
 import './Table.css'
 
 const Table = ({items}) => {
-  const filter = (key) => key != "_id" && key != "description"
+  const filter = (key) => key !== "_id" && key !== "description"
   const keys = Object.keys(items[0]).filter(filter)
   return (
     <table className="Table">
