@@ -1,7 +1,7 @@
 import React from 'react'
 import './Table.css'
 
-const Table = ({items}) => {
+const Table = ({items, onNetworkDownload}) => {
   const filter = (key) => key !== "_id" && key !== "description"
   const keys = Object.keys(items[0]).filter(filter)
   return (
@@ -20,7 +20,7 @@ const Table = ({items}) => {
 
             <tr key={index} className="Table-row">
 
-                <td className="Table-checkbox"><button className="Table-download">Import</button></td>
+                <td className="Table-checkbox"><button className="Table-download" onClick={() => onNetworkDownload(item._id)}>Import</button></td>
 
               {keys.map((key, index) => key === "modified" || key === "created" ?
               <td key={index}>{new Date(item[key]).toDateString()}</td> :

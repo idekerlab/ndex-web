@@ -83,7 +83,7 @@ class Browser extends Component {
               onFilterChange={this.handleFilterChange}
             />
             <div className="Browser-view">
-              <View items={items}/>
+              <View items={items} onNetworkDownload={this.props.onNetworkDownload}/>
             </div>
           </div>
         : <div className="Browser-empty-view">No relevant data</div>}

@@ -74,7 +74,7 @@ const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onP
     content={
       <ul className="SelectProfile-list">
         {
-          (profiles.filter((profile) => profile !== selectedProfile))
+          (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName && profile.userName !== selectedProfile.userName))
             .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
         }
       </ul>

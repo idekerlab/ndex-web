@@ -30,6 +30,7 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
+    console.log(this.state)
     const payload = JSON.stringify({
         userId: userName,
         password: password,
@@ -38,6 +39,7 @@ class Save extends Component {
         metadata: this.state,
         isPublic: this.state.public,
      })
+    console.log(payload.metadata)
     fetch('http://localhost:1234/cyndex2/v1/networks/current', {
       method: 'POST',
       headers: {
@@ -96,23 +98,54 @@ class Save extends Component {
         </Navbar>
         <div className="Save-entryfields">
           <div className="Save-left">
-            <LabelField label="Author"/>
-            <LabelField label="Organism"/>
-            <LabelField label="Disease"/>
-            <LabelField label="Tissue"/>
-            <LabelField label="Right's Holder"/>
-            <LabelField label="Rights"/>
-            <TextareaField label="References"/>
+            <LabelField
+              value={this.state.author}
+              onChange={this.handleFieldChange('author')}
+              label="Author"
+            />
+            <LabelField
+              value={this.state.organism}
+              onChange={this.handleFieldChange('organism')}
+              label="Organism"
+            />
+            <LabelField
+              value={this.state.disease}
+              onChange={this.handleFieldChange('disease')}
+              label="Disease"
+            />
+            <LabelField
+              value={this.state.tissue}
+              onChange={this.handleFieldChange('tissue')}
+              label="Tissue"
+            />
+            <LabelField
+              value={this.state.rightsHolder}
+              onChange={this.handleFieldChange('rightsHolder')}
+              label="Right's Holder"
+            />
+            <LabelField
+               value={this.state.rights}
+               onChange={this.handleFieldChange('rights')}
+               label="Rights"
+             />
+            <TextareaField
+              value={this.state.references}
+              onChange={this.handleFieldChange('references')}
+              label="References"
+            />
           </div>
           <div className="Save-right">
-            <TextareaField label="Description"/>
+            <TextareaField
+              value={this.state.description}
+              onChange={this.handleFieldChange('description')}
+              label="Description"
+            />
             <div className="Save-visibility">
               <h3>Save as Public?</h3>
               <input
                  type="checkbox"
                  value={this.state.public}
-                 onChange={(e) => this.handleChangeVisibility(e)}
-              />
+                 onChange={(e) => this.handleChangeVisibility(e)} />
             </div>
           </div>
         </div>
@@ -139,17 +172,17 @@ class Save extends Component {
 
 }
 
-const LabelField = ({label}) => (
+const LabelField = ({label, value, onChange}) => (
   <div className="Save-labelfield">
     <label>{label.toUpperCase()}</label>
-    <input type="text" placeholder={label + "..."}/>
+    <input type="text" value={value} onChange={onChange} placeholder={label + "..."}/>
   </div>
 )
 
-const TextareaField = ({label}) => (
+const TextareaField = ({label, value, onChange}) => (
   <div className="Save-textareafield">
     <label>{label.toUpperCase()}</label>
-    <textarea placeholder={"Enter your " + label.toLowerCase() + " here..."}/>
+    <textarea value={value} onChange={onChange} placeholder={"Enter your " + label.toLowerCase() + " here..."}/>
   </div>
 )
 

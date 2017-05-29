@@ -1,11 +1,12 @@
 import React from 'react';
 import './Cards.css'
 
-const Cards = ({items}) => (
+const Cards = ({items, onNetworkDownload}) => (
   <div className="Cards">
     {items.map((item) => (
       <Card
         key={item._id}
+        id={item._id}
         name={item.name}
         description={item.description}
         owner={item.owner}
@@ -13,12 +14,13 @@ const Cards = ({items}) => (
         updated={item.modified}
         nodes={item.nodes}
         edges={item.edges}
+        onNetworkDownload={onNetworkDownload}
       />
     ))}
   </div>
 )
 
-const Card = ({id, name, description, owner, visibility, updated, nodes, edges}) => (
+const Card = ({id, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
     <div key={id} className="Card-item">
     <div className="Card">
       <div className="Card-header">
@@ -47,7 +49,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges})
         { description ? <p className="Card-content-description">
           {description}
         </p> : null }
-        <button className="Card-content-download">Import</button>
+        <button className="Card-content-download" onClick={() => onNetworkDownload(id)}>Import</button>
       </div>
     </div>
   </div>

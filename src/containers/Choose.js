@@ -96,7 +96,29 @@ class Choose extends Component {
   }
 
   handleDownloadNetwork(networkId) {
-    console.log("Handle download called with " + networkId)
+    const {
+      serverAddress,
+      userName,
+      password,
+    } = this.props.selectedProfile
+    const payload = JSON.stringify({
+      userId: userName,
+      password: password,
+      serverUrl: serverAddress + '/v2',
+      uuid: networkId
+    })
+    fetch('http://localhost:1234/cyndex2/v1/networks', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: payload
+    })
+      .then((blob) => blob.json())
+      .then((resp) => {
+        console.log(resp)
+      })
   }
 
   render() {
