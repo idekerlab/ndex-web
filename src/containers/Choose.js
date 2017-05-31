@@ -103,7 +103,7 @@ class Choose extends Component {
       password,
     } = this.props.selectedProfile
     if (serverAddress == undefined) {
-      serverAddress = "http://ndexbio.org
+      serverAddress = "http://ndexbio.org"
     }
     const payload = JSON.stringify({
       userId: userName,
