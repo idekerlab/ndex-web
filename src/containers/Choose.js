@@ -97,7 +97,7 @@ class Choose extends Component {
 
   handleDownloadNetwork(networkId) {
     this.setState({ loading: true })
-    const {
+    let {
       serverAddress,
       userName,
       password,
