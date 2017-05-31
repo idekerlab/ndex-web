@@ -4,6 +4,8 @@ import './App.css'
 import Save from './containers/Save'
 import Choose from './containers/Choose'
 
+import Waiting from './components/Waiting'
+
 class App extends Component {
 
   constructor() {
@@ -93,6 +95,6 @@ class App extends Component {
 
 const Error = () => <div>AN ERROR OCCURED. PLEASE CLOSE THIS WINDOW AND TRY AGAIN.</div>
 
-const Loading = () => <div>LOADING</div>
+const Loading = () => <Waiting text="Loading... this shoudn't take long, please restart the application if nothing appears after a minute."/>
 
 export default App

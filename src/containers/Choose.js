@@ -6,6 +6,7 @@ import Profile from '../components/Profile'
 import Browser from '../components/Browser'
 import SearchBar from '../components/SearchBar'
 import Header from '../components/Header'
+import Waiting from '../components/Waiting'
 
 class Choose extends Component {
 
@@ -15,8 +16,7 @@ class Choose extends Component {
       searchTerm: this.props.searchTerm,
       numNetworks: 0,
       networks: [],
-      pending: [],
-      comppleted: [],
+      loading: false,
       exampleTerms: [
         {
           text: 'melanoma',
@@ -96,6 +96,7 @@ class Choose extends Component {
   }
 
   handleDownloadNetwork(networkId) {
+    this.setState({ loading: true })
     const {
       serverAddress,
       userName,
@@ -117,7 +118,7 @@ class Choose extends Component {
     })
       .then((blob) => blob.json())
       .then((resp) => {
-        console.log(resp)
+        this.setState({ loading: false })
       })
   }
 
@@ -140,6 +141,7 @@ class Choose extends Component {
     const subtitle = numNetworks > 200 ? "Showing 200 out of " : ""
     return (
       <div className="Choose">
+        { this.state.loading ? <Waiting text="Loading network from NDEx... Please wait."/> : null}
         <Navbar>
           <SearchBar
             searchterm={searchTerm}

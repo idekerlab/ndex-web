@@ -3,6 +3,7 @@ import './Save.css'
 
 import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
+import Waiting from '../components/Waiting'
 
 class Save extends Component {
 
@@ -11,6 +12,7 @@ class Save extends Component {
     const hydrate = (field) => this.props[field] || ''
     this.state = {
       name: this.props.name,
+      saving: false,
       author: hydrate('author'),
       organism: hydrate('organism'),
       disease: hydrate('disease'),
@@ -30,7 +32,6 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
-    console.log(this.state)
     const payload = JSON.stringify({
         userId: userName,
         password: password,
@@ -39,7 +40,11 @@ class Save extends Component {
         metadata: this.state,
         isPublic: this.state.public,
      })
-    console.log(payload.metadata)
+    if (userName == undefined || userName == "") {
+      alert("You must be logged with your NDEx username to save a network.")
+      return
+    }
+    this.setState({ saving: true })
     fetch('http://localhost:1234/cyndex2/v1/networks/current', {
       method: 'POST',
       headers: {
@@ -50,12 +55,11 @@ class Save extends Component {
     })
       .then((blob) => blob.json())
       .then((resp) => {
-        console.log("Save response")
-        console.log(resp)
+        this.setState({ saving: false })
       })
 
   }
-  
+
   handleChangeName(e) {
     this.setState({ name: e.target.value })
   }
@@ -86,6 +90,7 @@ class Save extends Component {
     console.log(handleProfileAdd)
     return (
       <div className="Save">
+        {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
         <Navbar>
           <Profile
             profiles={profiles}

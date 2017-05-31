@@ -1,0 +1,46 @@
+.Waiting {
+  position: fixed;
+  background-color: black;
+  color: white;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.8;
+}
+
+.Waiting h1 {
+  font-size: 1rem;
+  margin-top: -100px;
+}
+
+.Waiting-logo {
+  transform: scale(1.5);
+  margin: 40px;
+  margin-bottom: 300px;
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+.Waiting-spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  margin-left: -20px;
+  border-radius: 50%;
+  border-top: 4px solid white;
+  border-right: 4px solid transparent;
+  animation: spinner .6s linear infinite;
+}
