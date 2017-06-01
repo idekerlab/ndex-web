@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
 
+const remote = window.require('electron').remote
+
 class Save extends Component {
 
   constructor(props) {
@@ -24,6 +26,10 @@ class Save extends Component {
       uuid: hydrate('uuid'),
       public: false
     }
+  }
+
+  closeWindow() {
+    remote.getCurrentWindow().close()
   }
 
   onSave() {
@@ -55,6 +61,11 @@ class Save extends Component {
     })
       .then((blob) => blob.json())
       .then((resp) => {
+        if ((this.resp.errors.length) !== 0) {
+          alert("Error: " + this.resp.errors[0].message)
+        } else {
+          this.closeWindow()
+        }
         this.setState({ saving: false })
       })
 
@@ -164,7 +175,7 @@ class Save extends Component {
              value={this.state.name}
              onChange={(e) => this.handleChangeName(e)}
           />
-          <button>
+          <button onClick={this.closeWindow}>
             Cancel
           </button>
           <button onClick={() => this.onSave()}>
