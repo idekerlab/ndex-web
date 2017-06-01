@@ -1,4 +1,3 @@
-
 .Browser-view {
   background-color: #F1F1F1;
   position: absolute;
@@ -6,7 +5,7 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  top: 185px;
+  top: 184px;
 }
 
 @media (max-width: 640px) {
@@ -18,7 +17,8 @@
 .Browser-empty-view {
   position: absolute;
   width: 100%;
-  height: 87%;
+  top: 184px;
+  bottom: 0px;
   display: flex;
   justify-content: center;
   align-items: center;

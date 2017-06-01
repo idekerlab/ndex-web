@@ -86,7 +86,6 @@ class Choose extends Component {
             modified: network.modificationTime,
         }))
       }
-      this.setState({networks})
     })
   }
 

@@ -68,7 +68,6 @@ class Browser extends Component {
     let items = this.sort(this.filter(this.props.networks))
     return (
       <div>
-        {items.length ?
           <div className="Browser">
             <Toolbar
               views={Object.keys(views)}
@@ -82,11 +81,12 @@ class Browser extends Component {
               filter={filter}
               onFilterChange={this.handleFilterChange}
             />
+            {items.length ?
             <div className="Browser-view">
               <View items={items} onNetworkDownload={this.props.onNetworkDownload}/>
             </div>
+            : <div className="Browser-empty-view">No relevant data</div>}
           </div>
-        : <div className="Browser-empty-view">No relevant data</div>}
       </div>
     )
   }

@@ -16,6 +16,7 @@
 .ProfileBadge {
   color: white;
   padding: 8px 20px 8px 20px;
+  width: 250px;
   display: flex;
   align-items: center;
 }
@@ -48,6 +49,7 @@
 }
 
 .ProfileBadge h5 {
+  text-overflow: ellipsis;
   font-size: 1rem;
   font-weight: 300;
   font-style: oblique;
