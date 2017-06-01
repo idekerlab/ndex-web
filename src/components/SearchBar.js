@@ -1,22 +1,46 @@
 import React from 'react'
 import './SearchBar.css'
 
-export const SearchBar = ({searchterm, exampleTerms, onSearchtermChange}) => (
-  <div className="Search">
-    <input
-      className="SearchBar"
-      type="text"
-      placeholder="Enter search terms here..."
-      results="0"
-      value={searchterm}
-      onChange={(event) => onSearchtermChange(event.target.value)}
-    />
-    <SearchDropdown
-      exampleTerms={exampleTerms}
-      onSearchtermChange={onSearchtermChange}
-    />
-  </div>
-)
+const WAIT_INTERVAL = 1000
+const ENTER_KEY = 13
+
+export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
+  const handleKeyDown = (e) => {
+    if (e.keyCode === ENTER_KEY) {
+      handleSearch(e.target.value)
+    }
+  }
+  const handleChange = (e) => {
+    const value = e.target.value
+    if (this.timer !== undefined) {
+      clearTimeout(this.timer)
+    }
+    handleTermChange(value)
+    this.timer = setTimeout((() => {
+      handleSearch(value)
+    }), WAIT_INTERVAL)
+  }
+  return (
+    <div className="Search">
+      <input
+        className="SearchBar"
+        type="text"
+        placeholder="Enter search terms here..."
+        results="0"
+        value={term}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+      />
+      <SearchDropdown
+        exampleTerms={examples}
+        onSearchtermChange={(term) => {
+          handleTermChange(term)
+          handleSearch(term)
+        }}
+      />
+    </div>
+  )
+}
 
 const SearchDropdown = ({exampleTerms, onSearchtermChange}) => (
   <div className="SearchBar-dropdown">
