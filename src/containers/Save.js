@@ -61,8 +61,8 @@ class Save extends Component {
     })
       .then((blob) => blob.json())
       .then((resp) => {
-        if ((this.resp.errors.length) !== 0) {
-          alert("Error: " + this.resp.errors[0].message)
+        if ((resp.errors.length) !== 0) {
+          alert("Error: " + resp.errors[0].message)
         } else {
           this.closeWindow()
         }
