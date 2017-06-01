@@ -13,7 +13,7 @@ class Choose extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      searchTerm: this.props.searchTerm,
+      term: this.props.searchTerm,
       numNetworks: 0,
       networks: [],
       loading: false,
@@ -45,25 +45,25 @@ class Choose extends Component {
         }
       ]
     }
-    this.search()
+    this.handleSearch()
   }
 
-  search(term = undefined) {
-    let searchTerm = this.state.searchTerm
-    let selectedProfile = this.props.selectedProfile
-    if (term !== undefined) {
-      searchTerm = term
-    }
+  handleTermChange = (term) => {
+    this.setState({ term })
+  }
+
+  handleSearch = (term = "") => {
+    let profile = this.props.selectedProfile
     let headers = { 'Content-Type': 'application/json'}
-    if (Object.keys(selectedProfile).length !== 0) {
-      headers['Authorization'] = 'Basic ' + btoa(selectedProfile.userName + ':' + selectedProfile.password)
+    if (Object.keys(profile).length !== 0) {
+      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
-    if (selectedProfile.serverAddress === undefined) {
-      selectedProfile = { serverAddress: "http://ndexbio.org" }
+    if (profile.serverAddress === undefined) {
+      profile = { serverAddress: "http://ndexbio.org" }
     }
-    fetch(selectedProfile.serverAddress + '/v2/search/network?size=200', {
+    fetch(profile.serverAddress + '/v2/search/network?size=200', {
       method: 'POST',
-      body: JSON.stringify({ searchString: searchTerm }),
+      body: JSON.stringify({ searchString: term }),
       headers: new Headers(headers),
     }).then((response) => {
       return response.json()
@@ -86,12 +86,8 @@ class Choose extends Component {
             modified: network.modificationTime,
         }))
       }
+        this.setState({ networks })
     })
-  }
-
-  handleSearchtermChange(term) {
-    this.setState({ searchTerm: term })
-    this.search(term)
   }
 
   handleDownloadNetwork(networkId) {
@@ -134,21 +130,22 @@ class Choose extends Component {
       handleProfileLogout
     } = this.props
     const {
-      searchTerm,
+      term,
       numNetworks,
       networks,
       exampleTerms
     } = this.state
-    const headerSuffix = searchTerm ? "for " + searchTerm : ""
+    const headerSuffix = term ? "for " + term : ""
     const subtitle = numNetworks > 200 ? "Showing 200 out of " : ""
     return (
       <div className="Choose">
         { this.state.loading ? <Waiting text="Loading network from NDEx... Please wait."/> : null}
         <Navbar>
           <SearchBar
-            searchterm={searchTerm}
-            exampleTerms={exampleTerms}
-            onSearchtermChange={(term) => this.handleSearchtermChange(term)}
+            term={term}
+            examples={exampleTerms}
+            handleTermChange={this.handleTermChange}
+            handleSearch={this.handleSearch}
           />
           <Profile
             profiles={profiles}
