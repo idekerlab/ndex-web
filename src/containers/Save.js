@@ -23,7 +23,7 @@ class Save extends Component {
       tissue: hydrate('tissue'),
       rightsHolder: hydrate('rightsHolder'),
       rights: hydrate('rights'),
-      references: hydrate('reference'),
+      reference: hydrate('reference'),
       description: hydrate('description'),
       uuid: hydrate('uuid'),
       public: false
