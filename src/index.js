@@ -47,11 +47,7 @@ const initContextMenu = () => {
 ipcRenderer.on('initialized', (event, params) => {
   initContextMenu()
   const cyrestPort = params.cyrestPort
-  console.log("Listening on " + cyrestPort)
-  const close = document.getElementById('close')
-  close.onClick = () => {
-    remote.getCurrentWindow().close()
-  }
+  console.log("CyREST is listening on " + cyrestPort)
 })
 
 ReactDOM.render(<App />, document.getElementById('root'));
