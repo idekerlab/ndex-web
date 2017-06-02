@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "electron": "^1.6.10",
+    "js-base64": "^2.1.9",
+    "electron": "^1.7.2",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },
   "devDependencies": {
-    "react-scripts": "1.0.5"
+    "react-scripts": "1.0.7"
   },
   "scripts": {
     "start": "react-scripts start",
