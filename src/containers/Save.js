@@ -12,6 +12,8 @@ class Save extends Component {
   constructor(props) {
     super(props)
     const hydrate = (field) => this.props[field] || ''
+    console.log("Save props")
+    console.log(this.props)
     this.state = {
       name: this.props.name,
       saving: false,
@@ -21,7 +23,7 @@ class Save extends Component {
       tissue: hydrate('tissue'),
       rightsHolder: hydrate('rightsHolder'),
       rights: hydrate('rights'),
-      references: hydrate('references'),
+      references: hydrate('reference'),
       description: hydrate('description'),
       uuid: hydrate('uuid'),
       public: false
