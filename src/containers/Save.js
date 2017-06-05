@@ -26,7 +26,8 @@ class Save extends Component {
       reference: hydrate('reference'),
       description: hydrate('description'),
       uuid: hydrate('uuid'),
-      public: false
+      public: false,
+      overwrite: false
     }
   }
 
@@ -40,11 +41,15 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
+    let newuuid = ""
+    if (this.state.overwrite) {
+      newuuid = this.props.uuid
+    }
     const payload = JSON.stringify({
         userId: userName,
         password: password,
         serverUrl: serverAddress + '/v2',
-        uuid: this.state.uuid,
+        uuid: newuuid,
         metadata: this.state,
         isPublic: this.state.public,
      })
@@ -75,6 +80,10 @@ class Save extends Component {
 
   handleChangeName(e) {
     this.setState({ name: e.target.value })
+  }
+
+  handleChangeOverwrite(e) {
+    this.setState({ overwrite: !this.state.overwrite })
   }
 
   handleChangeVisibility(e) {
@@ -147,9 +156,9 @@ class Save extends Component {
                label="Rights"
              />
             <TextareaField
-              value={this.state.references}
-              onChange={this.handleFieldChange('references')}
-              label="References"
+              value={this.state.reference}
+              onChange={this.handleFieldChange('reference')}
+              label="Reference"
             />
           </div>
           <div className="Save-right">
@@ -163,8 +172,18 @@ class Save extends Component {
               <input
                  type="checkbox"
                  value={this.state.public}
-                 onChange={(e) => this.handleChangeVisibility(e)} />
+                 onChange={(e) => this.handleChangeVisibility(e)}
+              />
             </div>
+            <div className="Save-visibility">
+              <h3>Save as a New Network?</h3>
+              <input
+                 type="checkbox"
+                 value={this.state.overwrite}
+                 onChange={(e) => this.handleChangeOverwrite(e)}
+              />
+            </div>
+
           </div>
         </div>
         <div className="Save-actionbar">

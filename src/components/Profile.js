@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import './Profile.css'
 
+import defaultProfilePic from '../default-profile.png'
+
 class Profile extends Component {
 
   constructor() {
@@ -53,7 +55,7 @@ const ProfileBadge = ({profile, onMouseDown}) => (
   >
     <img
       alt="ProfileBadge"
-      src={profile.img || "http://bit.ly/2oLinub"}
+      src={profile.img || defaultProfilePic}
     />
     <div className="ProfileBadge-textblock">
       <h5>{profile.serverName || 'NDEx Public'}</h5>
@@ -166,7 +168,7 @@ class AddProfile extends Component {
         title="Add Profile"
         content={
           <div className="AddProfile-input">
-            <p>Enter a server name</p>
+            <p>Enter a profile name</p>
             <input
               placeholder="Server Name"
               onChange={this.handleFieldChange("serverName")}

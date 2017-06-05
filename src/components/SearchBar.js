@@ -34,6 +34,9 @@ export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
       <SearchDropdown
         exampleTerms={examples}
         onSearchtermChange={(term) => {
+          if (this.timer !== undefined) {
+            clearTimeout(this.timer)
+          }
           handleTermChange(term)
           handleSearch(term)
         }}

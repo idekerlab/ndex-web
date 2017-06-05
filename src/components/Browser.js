@@ -36,7 +36,11 @@ class Browser extends Component {
       let a = item1[this.state.sort]
       let b = item2[this.state.sort]
       if (a === b) {
-        return item1._id - item2._id
+        if (item1._id > item2._id) {
+          return -1
+        } else {
+          return 1
+        }
       } else if (a < b) {
         return -1
       } else {
