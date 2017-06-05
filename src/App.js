@@ -93,7 +93,7 @@ class App extends Component {
 
 }
 
-const Error = () => <div>AN ERROR OCCURED. PLEASE CLOSE THIS WINDOW AND TRY AGAIN.</div>
+const Error = () => <Waiting text="AN ERROR HAS OCCURED. PLEASE RESTART CYTOSCAPE, REINSTALL THE APP, OR CONTACT THE APP DEVELOPER."/>
 
 const Loading = () => <Waiting text="Loading... this shoudn't take long, please restart the application if nothing appears after a minute."/>
 

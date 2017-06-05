@@ -69,12 +69,13 @@ class Save extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         if ((resp.errors.length) !== 0) {
-          alert("Error: " + resp.errors[0].message)
+          alert("Error saving: " + JSON.stringify(resp))
         } else {
           this.closeWindow()
         }
         this.setState({ saving: false })
       })
+      .catch((error) => alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
 
   }
 
