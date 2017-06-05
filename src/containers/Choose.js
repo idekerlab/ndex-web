@@ -153,7 +153,10 @@ class Choose extends Component {
             onProfileAdd={handleProfileAdd}
             onProfileSelect={handleProfileSelect}
             onProfileDelete={handleProfileDelete}
-            onProfileLogout={handleProfileLogout}
+            onProfileLogout={() => {
+              handleProfileLogout()
+              this.handleSearch(term)
+            }}
           />
         </Navbar>
         <Header
