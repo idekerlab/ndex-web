@@ -88,7 +88,10 @@ class Choose extends Component {
       }
         this.setState({ networks })
     })
-    .catch((error) => alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
+    .catch((error) => {
+      this.setState({networks : [], numNetworks: 0})
+      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error))
+      })
   }
 
   handleDownloadNetwork(networkId) {
