@@ -42,8 +42,10 @@ class Save extends Component {
       password,
     } = this.props.selectedProfile
     let newuuid = ""
+    let method = "POST"
     if (this.state.overwrite) {
       newuuid = this.props.uuid
+      method = "PUT"
     }
     const payload = JSON.stringify({
         userId: userName,
@@ -53,13 +55,14 @@ class Save extends Component {
         metadata: this.state,
         isPublic: this.state.public,
      })
+
     if (userName == undefined || userName == "") {
       alert("You must be logged with your NDEx username to save a network.")
       return
     }
     this.setState({ saving: true })
     fetch('http://localhost:1234/cyndex2/v1/networks/current', {
-      method: 'POST',
+      method: method,
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -101,7 +104,6 @@ class Save extends Component {
   }
 
   render() {
-    console.log(this.props)
     const {
       profiles,
       selectedProfile,
@@ -110,7 +112,6 @@ class Save extends Component {
       handleProfileDelete,
       handleProfileLogout
     } = this.props
-    console.log(handleProfileAdd)
     return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
@@ -180,7 +181,8 @@ class Save extends Component {
               <h3>Save as a New Network?</h3>
               <input
                  type="checkbox"
-                 value={this.state.overwrite}
+                 value={!this.state.overwrite}
+                 defaultChecked={!this.state.overwrite}
                  onChange={(e) => this.handleChangeOverwrite(e)}
               />
             </div>
