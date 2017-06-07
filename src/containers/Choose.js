@@ -118,6 +118,11 @@ class Choose extends Component {
       },
       body: payload
     })
+      .then((resp) => {
+        if (!resp.ok){
+          throw new Error(resp.statusText)
+        }
+      })
       .then((blob) => blob.json())
       .then((resp) => {
         this.setState({ loading: false })
