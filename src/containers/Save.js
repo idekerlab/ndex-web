@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import './Save.css'
 
+import Minio from 'minio'
+
 import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
@@ -41,11 +43,11 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
-    let newuuid = ""
-    let method = "POST"
+    let newuuid = ''
+    let method = 'POST'
     if (this.state.overwrite) {
       newuuid = this.props.uuid
-      method = "PUT"
+      method = 'PUT'
     }
     const payload = JSON.stringify({
         userId: userName,
@@ -74,12 +76,30 @@ class Save extends Component {
         if ((resp.errors.length) !== 0) {
           alert("Error saving: " + JSON.stringify(resp))
         } else {
-          this.closeWindow()
+          this.saveImage()
+          //this.closeWindow()
         }
-        this.setState({ saving: false })
       })
       .catch((error) => alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
 
+  }
+
+  saveImage() {
+    fetch('http://localhost:1234/v1/networks/' + this.props.suid + '/views/first.png')
+    .then((png) => {
+      var minioClient = new Minio.Client({
+        endPoint: 'v1.storage.cytoscape.io',
+        secure: false,
+        accessKey: '130SEM0PG41YMEV9ZLHR',
+        secretKey: 'oEHlqLDRmGnaajou6RW1rTet6Ub8x+iMk6bYs91z'
+      })
+      console.log("Upload image for network id " + this.props.uuid)
+      minioClient.fPutObject('images', (this.props.uuid + '.png'), 'images/png', (err, etag) => {
+        if (err) alert("There's something wrong with your connection, could not upload network image to the NDEx image cache.")
+        this.setState({ saving: false })
+      })
+    })
+    .catch((error) => alert("There's something wrong with your connection and we could not contact the NDEx image cache. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
   }
 
   handleChangeName(e) {
