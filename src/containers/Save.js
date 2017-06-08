@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import './Save.css'
 
-import Minio from 'minio'
-
 import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
@@ -76,30 +74,51 @@ class Save extends Component {
         if ((resp.errors.length) !== 0) {
           alert("Error saving: " + JSON.stringify(resp))
         } else {
-          this.saveImage()
-          //this.closeWindow()
+          this.getNetworkId(this.props.suid, resp.data.uuid)
         }
       })
       .catch((error) => alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
 
   }
 
-  saveImage() {
-    fetch('http://localhost:1234/v1/networks/' + this.props.suid + '/views/first.png')
-    .then((png) => {
-      var minioClient = new Minio.Client({
-        endPoint: 'v1.storage.cytoscape.io',
-        secure: false,
-        accessKey: '130SEM0PG41YMEV9ZLHR',
-        secretKey: 'oEHlqLDRmGnaajou6RW1rTet6Ub8x+iMk6bYs91z'
-      })
-      console.log("Upload image for network id " + this.props.uuid)
-      minioClient.fPutObject('images', (this.props.uuid + '.png'), 'images/png', (err, etag) => {
-        if (err) alert("There's something wrong with your connection, could not upload network image to the NDEx image cache.")
-        this.setState({ saving: false })
-      })
+  getNetworkId(collectionId, uuid) {
+    fetch('http://localhost:1234/v1/collections/' + collectionId + '/tables')
+    .then((blob) => blob.json())
+    .then((listOfIds) => {
+      var networkId = listOfIds
+      for (var i = 0; i < listOfIds.length; i++){
+        for (var j = 0; j < listOfIds[i].rows.length; j++){
+          if ('shared name' in listOfIds[i].rows[j]){
+            this.saveImage(listOfIds[i].rows[j].SUID, uuid)
+            return;
+          }
+        }
+      }
     })
-    .catch((error) => alert("There's something wrong with your connection and we could not contact the NDEx image cache. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
+    .catch((error) => alert("Your network was saved, but an image could not be generated."))
+  }
+
+  saveImage(networkId, uuid) {
+    fetch('http://localhost:1234/v1/networks/' + networkId + '/views/first.png')
+    .then((png) => png.blob())
+    .then((blob) => {
+      fetch('http://v1.image-uploader.cytoscape.io/' + uuid, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'image/png',
+        },
+        body: blob
+        })
+        .then((resp) => {
+          if (!resp.ok){
+            alert('Failed to upload image to the cache')
+          }else{
+            console.log('Successfully uploaded network image')
+            this.closeWindow()
+          }
+          this.setState({saving: false})
+      })
+    }).catch((error) => alert("Your network was saved, but an image could not be generated. " + error))
   }
 
   handleChangeName(e) {
