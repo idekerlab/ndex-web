@@ -45,7 +45,7 @@ class Choose extends Component {
         }
       ]
     }
-    this.handleSearch()
+    this.handleSearch(this.props.searchTerm)
   }
 
   handleTermChange = (term) => {
