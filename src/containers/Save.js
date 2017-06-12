@@ -36,6 +36,7 @@ class Save extends Component {
   }
 
   onSave() {
+    console.log("Saving Now")
     const {
       serverAddress,
       userName,
@@ -74,28 +75,11 @@ class Save extends Component {
         if ((resp.errors.length) !== 0) {
           alert("Error saving: " + JSON.stringify(resp))
         } else {
-          this.getNetworkId(this.props.suid, resp.data.uuid)
+          console.log(resp)
+          this.saveImage(resp.data.currentRootNetwork.suid, resp.data.currentRootNetwork.uuid)
         }
       })
-      .catch((error) => alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
-
-  }
-
-  getNetworkId(collectionId, uuid) {
-    fetch('http://localhost:1234/v1/collections/' + collectionId + '/tables')
-    .then((blob) => blob.json())
-    .then((listOfIds) => {
-      var networkId = listOfIds
-      for (var i = 0; i < listOfIds.length; i++){
-        for (var j = 0; j < listOfIds[i].rows.length; j++){
-          if ('shared name' in listOfIds[i].rows[j]){
-            this.saveImage(listOfIds[i].rows[j].SUID, uuid)
-            return;
-          }
-        }
-      }
-    })
-    .catch((error) => alert("Your network was saved, but an image could not be generated."))
+      .catch((error) => alert("There's something wrong with your connection and we could not save your network to NDEx."))
   }
 
   saveImage(networkId, uuid) {
@@ -111,14 +95,15 @@ class Save extends Component {
         })
         .then((resp) => {
           if (!resp.ok){
-            alert('Failed to upload image to the cache')
-          }else{
-            console.log('Successfully uploaded network image')
-            this.closeWindow()
+            throw new Error(resp.statusText)
           }
+          this.closeWindow()
           this.setState({saving: false})
       })
-    }).catch((error) => alert("Your network was saved, but an image could not be generated. " + error))
+    }).catch((error) => {
+      alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
+      this.setState({saving: false})
+    })
   }
 
   handleChangeName(e) {

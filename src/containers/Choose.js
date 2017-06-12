@@ -122,12 +122,17 @@ class Choose extends Component {
         if (!resp.ok){
           throw new Error(resp.statusText)
         }
+        return resp
       })
       .then((blob) => blob.json())
       .then((resp) => {
         this.setState({ loading: false })
       })
-      .catch((error) => alert("There's something wrong with your connection. Please try again after the issue has been resolved. Error:" + JSON.stringify(error)))
+      .catch((error) => {
+        console.log(error)
+        alert("There's something wrong with your connection and we were unable to import the network. Please try again after the issue has been resolved.")
+
+      })
   }
 
   render() {
