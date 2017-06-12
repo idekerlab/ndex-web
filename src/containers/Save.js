@@ -36,7 +36,6 @@ class Save extends Component {
   }
 
   onSave() {
-    console.log("Saving Now")
     const {
       serverAddress,
       userName,
@@ -74,14 +73,13 @@ class Save extends Component {
       .then((resp) => {
         if ((resp.errors.length) !== 0) {
           alert("Error saving: " + JSON.stringify(resp))
+          this.setState({saving: false})
         } else {
-          console.log(resp)
-          this.saveImage(resp.data.currentRootNetwork.suid, resp.data.currentRootNetwork.uuid)
+          this.saveImage(resp.data.suid, resp.data.uuid)
         }
       })
-      .catch((error) => alert("There's something wrong with your connection and we could not save your network to NDEx."))
+      .catch((error) => alert(error + "There's something wrong with your connection and we could not save your network to NDEx."))
   }
-
   saveImage(networkId, uuid) {
     fetch('http://localhost:1234/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
