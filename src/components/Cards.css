@@ -44,14 +44,24 @@
   padding: 0 5px 0 5px;
 }
 
+.Card-clipboard-img {
+  width: 16px;
+  height: 16px;
+  padding: 0px 3px 0px 6px;
+}
+
+.Card-clipboard-img:hover {
+  opacity:.5;
+}
+
 .Card-header-group {
   display: flex;
   align-items: center;
 }
 
 .Card-header-icon {
-  height: 2rem;
-  width: 2rem;
+  height: 1.4rem;
+  width: 1.4rem;
   border-radius: 180px;
   margin: 0px;
 }

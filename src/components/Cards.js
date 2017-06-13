@@ -2,6 +2,7 @@ import React from 'react';
 import './Cards.css'
 
 import profileBadge from '../default-profile.png'
+import copy from 'copy-to-clipboard'
 
 const Cards = ({items, onNetworkDownload}) => (
   <div className="Cards">
@@ -22,6 +23,12 @@ const Cards = ({items, onNetworkDownload}) => (
   </div>
 )
 
+function copyFunc(uuid) {
+  let url = "http://ndexbio.org/#/newNetwork/" + uuid
+  copy(url)
+  alert("Copied " + url + " to clipboard")
+}
+
 const Card = ({id, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
     <div key={id} className="Card-item">
     <div className="Card">
@@ -34,7 +41,11 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
           />
           <h5 className="Card-header-title">{owner}</h5>
         </div>
-        <p className="Card-header-subtitle">{visibility}</p>
+
+        <div className="Card-header-group">
+          <p>{visibility}</p>
+          <img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} tooltip="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>
+        </div>
       </div>
       <object className="Card-image" alt="network" data={getImage(id)} type="image/png"> <img src=""/> </object>
       <div className="Card-content">
