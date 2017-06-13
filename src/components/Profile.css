@@ -162,6 +162,19 @@
   width: 300px;
 }
 
+.SelectProfile-NoProfiles {
+  height: 100%;
+  width: 100%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.SelectProfile-NoProfiles p {
+  color: white;
+}
+
 /*AddProfile*/
 
 .AddProfile-input {

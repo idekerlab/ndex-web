@@ -70,29 +70,29 @@ const ProfileDropdown = ({ActivePage, ...rest}) => (
   </div>
 )
 
-const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => (
-  <Dropdown
-    title="Select Profile"
-    content={
-      <ul className="SelectProfile-list">
-        {
-          (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName && profile.userName !== selectedProfile.userName))
-            .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
-        }
-      </ul>
-    }
-    actions={[
-      <DropdownAction
-        label="Add Acount"
-        onClick={() => onPageActivate('add')}
-      />,
-      <DropdownAction
-        label="Sign out"
-        onClick={() => onProfileLogout()}
-      />
-    ]}
-  />
-)
+const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => {
+  const  profileButtons = (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName && profile.userName !== selectedProfile.userName))
+              .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
+  return (
+    <Dropdown
+      title="Select Profile"
+      content={profileButtons.length !== 0 ?
+          <ul className="SelectProfile-list">{profileButtons}</ul> :
+          <div className="SelectProfile-NoProfiles"><p>Signed out profiles will appear here</p></div>
+      }
+      actions={[
+        <DropdownAction
+          label="Add Acount"
+          onClick={() => onPageActivate('add')}
+        />,
+        <DropdownAction
+          label="Sign out"
+          onClick={() => onProfileLogout()}
+        />
+      ]}
+    />
+  )
+}
 
 const ProfileButton = (index, profile, onProfileSelect, onProfileDelete) => (
   <li
