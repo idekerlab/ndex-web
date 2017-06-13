@@ -110,7 +110,7 @@ class Save extends Component {
   }
 
   showUuidOnSave(uuid){
-    alert("Network saved to NDEx with UUID: " + uuid)
+    alert("Network saved to NDEx with UUID: \n" + uuid)
   }
 
   handleChangeName(e) {
