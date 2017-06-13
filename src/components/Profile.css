@@ -110,11 +110,11 @@
   }
 }
 
-.ProfileDropdown:focus {
+.ProfileDropdown:hover {
   display: block;
 }
 
-.ProfileBadge:focus + .ProfileDropdown {
+.ProfileBadge:hover + .ProfileDropdown {
   display: block;
 }
 
