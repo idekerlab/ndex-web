@@ -1,6 +1,8 @@
 import React from 'react';
 import './Cards.css'
 
+import profileBadge from '../default-profile.png'
+
 const Cards = ({items, onNetworkDownload}) => (
   <div className="Cards">
     {items.map((item) => (
@@ -28,7 +30,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
           <img
             className="Card-header-icon"
             alt="profile"
-            src="https://s-media-cache-ak0.pinimg.com/736x/40/32/e0/4032e0031e2e95989f1e76fe3d4f57b7.jpg"
+            src={profileBadge}
           />
           <h5 className="Card-header-title">{owner}</h5>
         </div>
