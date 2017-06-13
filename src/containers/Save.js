@@ -72,14 +72,16 @@ class Save extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         if ((resp.errors.length) !== 0) {
-          alert("Error saving: " + JSON.stringify(resp))
+          alert("Error saving: " + JSON.stringify(resp.message))
           this.setState({saving: false})
         } else {
           this.saveImage(resp.data.suid, resp.data.uuid)
         }
       })
-      .catch((error) => alert(error + "There's something wrong with your connection and we could not save your network to NDEx."))
-      this.setState({saving: false})
+      .catch((error) => {
+        alert("There's something wrong with your connection and we could not save your network to NDEx.")
+        this.setState({saving: false})
+      })
   }
 
   saveImage(networkId, uuid) {
@@ -97,12 +99,18 @@ class Save extends Component {
           if (!resp.ok){
             throw new Error(resp.statusText)
           }
+          this.showUuidOnSave(uuid)
           this.closeWindow()
       })
     }).catch((error) => {
       alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
       this.setState({saving: false})
+      this.showUuidOnSave(uuid)
     })
+  }
+
+  showUuidOnSave(uuid){
+    alert("Network saved to NDEx with UUID: " + uuid)
   }
 
   handleChangeName(e) {
@@ -173,7 +181,7 @@ class Save extends Component {
             <LabelField
               value={this.state.rightsHolder}
               onChange={this.handleFieldChange('rightsHolder')}
-              label="Right's Holder"
+              label="Rights Holder"
             />
             <LabelField
                value={this.state.rights}

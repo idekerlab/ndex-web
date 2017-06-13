@@ -24,9 +24,9 @@ const Cards = ({items, onNetworkDownload}) => (
 )
 
 function copyFunc(uuid) {
-  let url = "http://ndexbio.org/#/newNetwork/" + uuid
-  copy(url)
-  alert("Copied " + url + " to clipboard")
+  //let url = "http://ndexbio.org/#/newNetwork/" + uuid
+  copy(uuid)
+  alert("Copied UUID " + uuid + " to clipboard")
 }
 
 const Card = ({id, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
@@ -44,7 +44,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
 
         <div className="Card-header-group">
           <p>{visibility}</p>
-          <img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} tooltip="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>
+          <img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} title="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>
         </div>
       </div>
       <object className="Card-image" alt="network" data={getImage(id)} type="image/png"> <img src=""/> </object>
@@ -52,7 +52,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
         <h5 className="Card-content-title">
           {name}
         </h5>
-        <p className="Card-content-last-activity">
+        <p className="Card-content-last-activity" title={new Date(updated).toString()}>
           {"Last updated " + new Date(updated).toDateString()}
         </p>
         <div className="Card-content-facts">
