@@ -31,6 +31,7 @@ export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />
+      {term.length === 0 ?
       <SearchDropdown
         exampleTerms={examples}
         onSearchtermChange={(term) => {
@@ -40,7 +41,7 @@ export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
           handleTermChange(term)
           handleSearch(term)
         }}
-      />
+      />: null }
     </div>
   )
 }

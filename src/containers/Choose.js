@@ -27,6 +27,10 @@ class Choose extends Component {
           description: 'Any mention of RBL2'
         },
         {
+          text: 'uuid:2e67e8f0-3a6c-11e7-8f50-0ac135e8bacf',
+          description: 'Network by UUID'
+        },
+        {
           text: 'nodeCount:[11 TO 79]',
           description: 'By a numeric property range, a node count of 11 to 79 nodes'
         },
