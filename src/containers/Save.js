@@ -79,7 +79,9 @@ class Save extends Component {
         }
       })
       .catch((error) => alert(error + "There's something wrong with your connection and we could not save your network to NDEx."))
+      this.setState({saving: false})
   }
+
   saveImage(networkId, uuid) {
     fetch('http://localhost:1234/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
@@ -96,7 +98,6 @@ class Save extends Component {
             throw new Error(resp.statusText)
           }
           this.closeWindow()
-          this.setState({saving: false})
       })
     }).catch((error) => {
       alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
