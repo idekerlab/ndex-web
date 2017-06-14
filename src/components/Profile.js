@@ -13,6 +13,7 @@ class Profile extends Component {
         "select": SelectProfile,
         "add"   : AddProfile
       },
+      isOpen: false,
       activePage: 'select'
     }
     this.handlePageActivate = this.handlePageActivate.bind(this)
@@ -22,16 +23,27 @@ class Profile extends Component {
     this.setState({ activePage: newActivePage })
   }
 
+  openDropdown() {
+    this.setState({isOpen: true})
+  }
+
+  closeDropdown() {
+    this.setState({isOpen: false})
+  }
+
   render() {
-    const { pages, activePage } = this.state
+    const { pages, activePage, isOpen } = this.state
     const {
       profiles, selectedProfile,
       onProfileAdd, onProfileSelect, onProfileDelete, onProfileLogout
     } = this.props
     return (
       <div className="Profile">
-        <ProfileBadge profile={selectedProfile}/>
+        <ProfileBadge
+          onClick={() => this.openDropdown()}
+          profile={selectedProfile}/>
         <ProfileDropdown
+          isOpen={isOpen}
           ActivePage={pages[activePage]}
           onPageActivate={this.handlePageActivate}
           profile={selectedProfile}
@@ -42,16 +54,17 @@ class Profile extends Component {
           onProfileDelete={onProfileDelete}
           onProfileLogout={onProfileLogout}
         />
+        {this.state.isOpen ? <div className="Profile-Backdrop" onClick={() => this.closeDropdown()}/> : null}
       </div>
     )
   }
 
 }
 
-const ProfileBadge = ({profile, onMouseDown}) => (
+const ProfileBadge = ({profile, onClick}) => (
   <div
     className="ProfileBadge"
-    onMouseDown={onMouseDown}
+    onMouseDown={onClick}
   >
     <img
       alt="ProfileBadge"
@@ -64,8 +77,10 @@ const ProfileBadge = ({profile, onMouseDown}) => (
   </div>
 )
 
-const ProfileDropdown = ({ActivePage, ...rest}) => (
-  <div className="ProfileDropdown">
+const ProfileDropdown = ({ActivePage, isOpen, ...rest}) => (
+  <div
+    className={"ProfileDropdown " + (isOpen ? "isOpen" :  "")}
+  >
     <ActivePage {...rest}/>
   </div>
 )

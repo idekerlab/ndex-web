@@ -104,18 +104,25 @@
   height: 510px;
   z-index: 10;
 }
+
+.ProfileDropdown.isOpen {
+  display: block;
+}
+
 @media (max-width: 430px) {
   .ProfileDropdown {
     width: 375px;
   }
 }
 
-.ProfileDropdown:hover {
-  display: block;
-}
-
-.ProfileBadge:hover + .ProfileDropdown {
-  display: block;
+.Profile-Backdrop {
+  position:fixed;
+  top:0;
+  right:0;
+  left:0;
+  bottom:0;
+  background-color:transparent;
+  z-index:9;
 }
 
 .ProfileDropdown-title {
@@ -201,7 +208,6 @@
   text-align: left;
   font-weight: bold;
   padding-left: 25px;
-  width: 90%;
 }
 
 .AddProfile-fail {
