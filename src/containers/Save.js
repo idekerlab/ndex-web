@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './Save.css'
-
+import copy from 'copy-to-clipboard'
 import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
@@ -27,7 +27,8 @@ class Save extends Component {
       description: hydrate('description'),
       uuid: hydrate('uuid'),
       public: false,
-      overwrite: false
+      overwrite: false,
+      success: false,
     }
   }
 
@@ -72,7 +73,7 @@ class Save extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         if ((resp.errors.length) !== 0) {
-          alert("Error saving: " + JSON.stringify(resp.message))
+          alert("Error saving: " + JSON.stringify(resp).errors[0].message || "Unknown")
           this.setState({saving: false})
         } else {
           this.saveImage(resp.data.suid, resp.data.uuid)
@@ -99,18 +100,12 @@ class Save extends Component {
           if (!resp.ok){
             throw new Error(resp.statusText)
           }
-          this.showUuidOnSave(uuid)
-          this.closeWindow()
+          this.setState({saving: false, 'uuid':uuid, 'success': true})
       })
     }).catch((error) => {
       alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
-      this.setState({saving: false})
-      this.showUuidOnSave(uuid)
+      this.setState({saving: false, 'uuid':uuid, 'success': true})
     })
-  }
-
-  showUuidOnSave(uuid){
-    alert("Network saved to NDEx with UUID: \n" + uuid)
   }
 
   handleChangeName(e) {
@@ -146,6 +141,15 @@ class Save extends Component {
     return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
+        {this.state.success &&
+          <div className="success-modal" onClick={this.closeWindow}>
+            <p id="success-modal-message" onClick={() => {
+              copy(this.state.uuid);
+              alert("UUID Copied")
+              this.closeWindow()}
+            }>Network saved with UUID {this.state.uuid}. Click to copy.</p>
+          </div>
+        }
         <Navbar>
           <Profile
             profiles={profiles}

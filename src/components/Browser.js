@@ -54,7 +54,7 @@ class Browser extends Component {
     if (this.state.filter !== "") {
       return items.filter((item) => {
         for (var key in item) {
-          if (String(item[key].toLowerCase()).includes(this.state.filter.toLowerCase())) {
+          if (String(item[key]).toLowerCase().includes(this.state.filter.toLowerCase())) {
             return true
           }
         }
