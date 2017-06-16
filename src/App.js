@@ -48,6 +48,7 @@ class App extends Component {
       selectedProfile: profile
     })
     window.localStorage.setItem('profiles', JSON.stringify(this.state.profiles))
+    window.localStorage.setItem('selectedProfile', JSON.stringify(profile))
   }
 
   handleProfileDelete = (profile) => {

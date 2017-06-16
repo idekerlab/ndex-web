@@ -136,7 +136,6 @@ class Choose extends Component {
         this.setState({ loading: false })
       })
       .catch((error) => {
-        console.log(error)
         alert("There's something wrong with your connection and we were unable to import the network. Please try again after the issue has been resolved.")
         this.setState({loading:false})
       })

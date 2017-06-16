@@ -12,8 +12,6 @@ class Save extends Component {
   constructor(props) {
     super(props)
     const hydrate = (field) => this.props[field] || ''
-    console.log("Save props")
-    console.log(this.props)
     this.state = {
       name: this.props.name,
       saving: false,
