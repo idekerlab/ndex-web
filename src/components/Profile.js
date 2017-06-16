@@ -116,12 +116,10 @@ const ProfileButton = (index, profile, onProfileSelect, onProfileDelete) => (
   >
     <ProfileBadge
       profile={profile}
-      onMouseDown={() => onProfileSelect(profile)}
+      onClick={() => onProfileSelect(profile)}
     />
     <button
-      onMouseDown={() => {
-        onProfileDelete(profile)
-      }}
+      onMouseDown={() => onProfileDelete(profile)}
     >
       Delete
     </button>
