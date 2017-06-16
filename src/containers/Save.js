@@ -50,12 +50,24 @@ class Save extends Component {
       newuuid = this.props.uuid
       method = 'PUT'
     }
+    const metadata = {
+      name: this.state.name,
+      author: this.state.author,
+      organism: this.state.organism,
+      disease: this.state.disease,
+      tissue: this.state.tissue,
+      rightsHolder: this.state.rightsHolder,
+      rights: this.state.rights,
+      reference: this.state.reference,
+      description: this.state.reference,
+    }
+
     const payload = JSON.stringify({
         userId: userName,
         password: password,
         serverUrl: serverAddress + '/v2',
         uuid: newuuid,
-        metadata: this.state,
+        metadata: metadata,
         isPublic: this.state.public,
      })
 
