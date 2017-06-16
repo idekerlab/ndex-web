@@ -32,6 +32,10 @@ class Save extends Component {
     }
   }
 
+  componentDidMount() {
+    document.title = "Save to NDEx";
+  }
+
   closeWindow() {
     remote.getCurrentWindow().close()
   }

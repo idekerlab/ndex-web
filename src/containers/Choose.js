@@ -56,6 +56,9 @@ class Choose extends Component {
     this.setState({ term })
   }
 
+  componentDidMount() {
+    document.title = "Browse NDEx";
+  }
   handleSearch = (term = "") => {
     let profile = this.props.selectedProfile
     let headers = { 'Content-Type': 'application/json'}
@@ -94,7 +97,7 @@ class Choose extends Component {
     })
     .catch((error) => {
       this.setState({networks : [], numNetworks: 0})
-      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved. Error:" + JSON.stringify(error))
+      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
       })
   }
 
