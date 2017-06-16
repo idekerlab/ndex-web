@@ -61,7 +61,6 @@ class Save extends Component {
       reference: this.state.reference,
       description: this.state.description,
     }
-    console.log(this.state.public)
     const payload = JSON.stringify({
         userId: userName,
         password: password,
@@ -75,6 +74,7 @@ class Save extends Component {
       alert("You must be logged with your NDEx username to save a network.")
       return
     }
+    this.setState({ saving: true })
     fetch('http://localhost:1234/cyndex2/v1/networks/current', {
       method: method,
       headers: {
