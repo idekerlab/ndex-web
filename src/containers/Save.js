@@ -155,12 +155,13 @@ class Save extends Component {
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
         {this.state.success &&
-          <div className="success-modal" onClick={this.closeWindow}>
+          <div className="success-modal">
             <p id="success-modal-message" onClick={() => {
               copy(this.state.uuid);
               alert("UUID Copied")
               this.closeWindow()}
             }>Network saved with UUID {this.state.uuid}. Click to copy.</p>
+            <p id="success-modal-close" oncClick={this.closeWindow}>Click to close this window.</p>
           </div>
         }
         <Navbar>

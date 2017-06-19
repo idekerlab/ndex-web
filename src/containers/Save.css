@@ -172,3 +172,20 @@
 #success-modal-message:hover {
   background: #269f42;
 }
+
+#success-modal-close {
+  width: 100%;
+  position: absolute;
+  bottom: 30%;
+  text-align: center;
+  padding: 20px;
+  color: white;
+  background: #E74C3C;
+  cursor: pointer;
+}
+
+#success-modal-close {
+  background: #B03A2E;
+}
+
+
