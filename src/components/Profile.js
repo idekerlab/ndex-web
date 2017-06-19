@@ -150,14 +150,13 @@ class AddProfile extends Component {
   verifyLogin() {
     const profile = this.state
     const { onPageActivate, onProfileAdd } = this.props
-    const filtered = this.props.profiles.filter((p) => p.serverName === profile.serverName)
-    if (filtered.length !== 0) {
-      this.setState({failed: true})
-    }
     if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
         profile.serverAddress = "http://" + profile.serverAddress
     }
-    if (profile.serverAddress === "" || profile.serverName === "") {
+    const filtered = this.props.profiles.filter((p) => p.serverName === profile.serverName)
+    if (filtered.length !== 0) {
+      this.setState({failed: true})
+    } else if (profile.serverAddress === "" || profile.serverName === "") {
       this.setState({failed: true})
     } else {
       fetch(profile.serverAddress + "/v2/user?valid=true", {
