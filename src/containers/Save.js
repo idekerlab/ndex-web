@@ -228,12 +228,14 @@ class Save extends Component {
             </div>
             <div className="Save-visibility">
               <h3>Save as a New Network?</h3>
+              {this.props.uuid !== "" ?
               <input
                  type="checkbox"
                  value={!this.state.overwrite}
                  defaultChecked={!this.state.overwrite}
                  onChange={(e) => this.handleChangeOverwrite(e)}
-              />
+              /> :
+              <input type="checkbox" value={true} disabled/>}
             </div>
 
           </div>
