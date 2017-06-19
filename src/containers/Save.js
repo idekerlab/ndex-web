@@ -151,6 +151,8 @@ class Save extends Component {
       handleProfileDelete,
       handleProfileLogout
     } = this.props
+    console.log("Saving")
+    console.log(this.props)
     return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
@@ -228,7 +230,7 @@ class Save extends Component {
             </div>
             <div className="Save-visibility">
               <h3>Save as a New Network?</h3>
-              {this.props.uuid !== "" ?
+              {this.state.uuid !== "" ?
               <input
                  type="checkbox"
                  value={!this.state.overwrite}
