@@ -161,7 +161,7 @@ class Save extends Component {
               alert("UUID Copied")
               this.closeWindow()}
             }>Network saved with UUID {this.state.uuid}. Click to copy.</p>
-            <p id="success-modal-close" oncClick={this.closeWindow}>Click to close this window.</p>
+            <p id="success-modal-close" onClick={() => this.closeWindow()}>Click to close this window.</p>
           </div>
         }
         <Navbar>
