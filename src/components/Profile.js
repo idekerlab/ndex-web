@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import './Profile.css'
 
-import defaultProfilePic from '../default-profile.png'
-
+import defaultProfilePic from '../default-profile.png' 
 class Profile extends Component {
 
   constructor() {
@@ -86,7 +85,7 @@ const ProfileDropdown = ({ActivePage, isOpen, ...rest}) => (
 )
 
 const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => {
-  const  profileButtons = (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName && profile.userName !== selectedProfile.userName))
+  const  profileButtons = (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName))
               .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
   return (
     <Dropdown
@@ -151,6 +150,10 @@ class AddProfile extends Component {
   verifyLogin() {
     const profile = this.state
     const { onPageActivate, onProfileAdd } = this.props
+    const filtered = this.props.profiles.filter((p) => p.serverName === profile.serverName)
+    if (filtered.length !== 0) {
+      this.setState({failed: true})
+    }
     if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
         profile.serverAddress = "http://" + profile.serverAddress
     }
@@ -183,7 +186,7 @@ class AddProfile extends Component {
           <div className="AddProfile-input">
             <p>Enter a profile name</p>
             <input
-              placeholder="Server Name"
+              placeholder="Profile Name"
               onChange={this.handleFieldChange("serverName")}
             />
             <p>Enter the address of an NDEx Server</p>
@@ -202,12 +205,12 @@ class AddProfile extends Component {
               type="password"
               onChange={this.handleFieldChange("password")}
             />
-            {!this.state.failed || <p className="AddProfile-fail">Address or credentials invalid! Try again.</p>}
+            {!this.state.failed || <p className="AddProfile-fail">Credentials invalid or Profile exists! Try again.</p>}
           </div>
         }
         actions={[
           <DropdownAction
-            label="Add Acount"
+            label="Add Account"
             onClick={() => this.verifyLogin()}
           />,
           <DropdownAction
