@@ -28,6 +28,9 @@ class Save extends Component {
       overwrite: false,
       success: false,
     }
+    if (this.props.createdFromSingleton) {
+      alert("This network does not exist on NDEx as a collection, it cannot be overwritten (otherwise your NDEx network will not be readable/writeable to anyone but Cytoscape). Instead, it will be saved as a new network.")
+    }
   }
 
   componentDidMount() {
