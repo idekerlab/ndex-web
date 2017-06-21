@@ -184,7 +184,7 @@
   cursor: pointer;
 }
 
-#success-modal-close {
+#success-modal-close:hover {
   background: #B03A2E;
 }
 
