@@ -5,7 +5,6 @@ import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
 
-const remote = window.require('electron').remote
 
 class Save extends Component {
 
@@ -38,7 +37,6 @@ class Save extends Component {
   }
 
   closeWindow() {
-    remote.getCurrentWindow().close()
   }
 
   onSave() {
