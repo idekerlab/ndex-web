@@ -96,10 +96,12 @@ const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onP
       }
       actions={[
         <DropdownAction
-          label="Add Acount"
+          buttonId="addAccount"
+					label="Add Acount"
           onClick={() => onPageActivate('add')}
         />,
         <DropdownAction
+					buttonId="back"
           label="Sign out"
           onClick={() => onProfileLogout()}
         />
@@ -148,9 +150,11 @@ class AddProfile extends Component {
   }
 
   verifyLogin() {
-    const profile = this.state
+    const profile = Object.assign({}, this.state)
     const { onPageActivate, onProfileAdd } = this.props
-    if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
+		if (profile.serverAddress === '')
+			profile.serverAddress = 'http://ndexbio.org'
+		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
         profile.serverAddress = "http://" + profile.serverAddress
     }
     const filtered = this.props.profiles.filter((p) => p.serverName === profile.serverName)
@@ -190,7 +194,7 @@ class AddProfile extends Component {
             />
             <p>Enter the address of an NDEx Server</p>
             <input
-              placeholder="Server Address"
+              placeholder="Server Address (http://ndexbio.org)"
               onChange={this.handleFieldChange("serverAddress")}
             />
             <p>Enter your NDEx username</p>
@@ -203,16 +207,22 @@ class AddProfile extends Component {
               placeholder="Password"
               type="password"
               onChange={this.handleFieldChange("password")}
-            />
+            	onKeyPress={(event) => {
+								if (event.charCode === 13)
+									document.getElementById("addAccount").click()
+							}}
+						/>
             {!this.state.failed || <p className="AddProfile-fail">Credentials invalid or Profile exists! Try again.</p>}
           </div>
         }
         actions={[
           <DropdownAction
-            label="Add Account"
+						buttonId="addAccount"
+						label="Add Account"
             onClick={() => this.verifyLogin()}
           />,
           <DropdownAction
+						buttonId="back"
             label="Back"
             onClick={() => onPageActivate('select')}
           />
@@ -251,8 +261,8 @@ const DropdownActions = ({children}) => (
   </div>
 )
 
-const DropdownAction = ({label, onClick}) => (
-  <button onClick={onClick}>{label}</button>
+const DropdownAction = ({label, onClick, buttonId}) => (
+  <button onClick={onClick} id={buttonId}>{label}</button>
 )
 
 export default Profile

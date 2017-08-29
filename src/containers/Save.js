@@ -37,7 +37,8 @@ class Save extends Component {
   }
 
   closeWindow() {
-  }
+  	window.frame.dispose();
+	}
 
   onSave() {
     const {
@@ -238,7 +239,7 @@ class Save extends Component {
                  defaultChecked={!this.state.overwrite}
                  onChange={(e) => this.handleChangeOverwrite(e)}
               /> :
-              <input type="checkbox" defaultChecked={true} checked disabled/>}
+              <input type="checkbox" defaultChecked={true} disabled/>}
             </div>
 
           </div>

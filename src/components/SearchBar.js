@@ -5,7 +5,9 @@ const WAIT_INTERVAL = 1000
 const ENTER_KEY = 13
 
 export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
-  const handleKeyDown = (e) => {
+  if (term === undefined)
+		term = ""
+	const handleKeyDown = (e) => {
     if (e.keyCode === ENTER_KEY) {
       handleSearch(e.target.value)
     }
@@ -50,8 +52,9 @@ const SearchDropdown = ({exampleTerms, onSearchtermChange}) => (
   <div className="SearchBar-dropdown">
     <h5 className="SearchBar-dropdown-list-title">Sample Queries</h5>
     <ul className="SearchBar-dropdown-list">
-    {exampleTerms.map((example) => (
+    {exampleTerms.map((example, k) => (
       <li
+				key={k}
         className="SearchBar-dropdown-list-item"
         onMouseDown={() => onSearchtermChange(example.text)}
       >
