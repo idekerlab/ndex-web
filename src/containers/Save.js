@@ -71,7 +71,7 @@ class Save extends Component {
         isPublic: this.state.public,
      })
 
-    if (userName == undefined || userName == "") {
+    if (userName === undefined || userName === "") {
       alert("You must be logged with your NDEx username to save a network.")
       return
     }
