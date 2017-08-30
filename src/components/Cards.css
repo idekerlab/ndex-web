@@ -86,7 +86,7 @@
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-  filter: contrast(85%);
+  /*filter: contrast(85%);*/
   overflow: hidden;
   position: relative;
   transition: filter 0.5s cubic-bezier(.43,.41,.22,.91);;
