@@ -134,7 +134,6 @@ class Choose extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         this.setState({ loading: false })
-      	window.frame.dispose()
 			})
       .catch((error) => {
         alert("There's something wrong with your connection and we were unable to import the network. Please try again after the issue has been resolved.")
