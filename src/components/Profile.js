@@ -194,7 +194,7 @@ class AddProfile extends Component {
             />
             <p>Enter the address of an NDEx Server</p>
             <input
-              placeholder="Server Address (http://ndexbio.org)"
+              placeholder="Server Address (default: http://ndexbio.org)"
               onChange={this.handleFieldChange("serverAddress")}
             />
             <p>Enter your NDEx username</p>
