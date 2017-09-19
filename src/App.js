@@ -20,7 +20,7 @@ class App extends Component {
   }
 
   loadComponentConfig() {
-    fetch('http://localhost:1234/cyndex2/v1/status')
+    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/status')
       .then((blob) => blob.json())
       .then((resp) => {
         if (resp.errors.length !== 0) {
@@ -33,6 +33,8 @@ class App extends Component {
             parameters: resp.data.parameters
           })
         }
+      }).catch((exc) => {
+      	this.setState({component: 'cyrestError'})
       })
   }
 
@@ -71,7 +73,8 @@ class App extends Component {
       error: Error,
       loading: Loading,
       choose: Choose,
-      save: Save
+      save: Save,
+      cyrestError: CyRESTError
     }
     const profileActions = {
       handleProfileSelect: this.handleProfileSelect,
@@ -98,4 +101,6 @@ const Error = () => <Waiting text="AN ERROR HAS OCCURED. PLEASE RESTART CYTOSCAP
 
 const Loading = () => <Waiting text="Loading... this shoudn't take long, please restart the application if nothing appears after a minute."/>
 
-export default App
+const CyRESTError = () => <Waiting text="Unable to connect to CyREST. Is Cytoscape Automation available? Restart Cytoscape and try again."/>
+
+export default App;

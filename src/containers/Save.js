@@ -77,7 +77,7 @@ class Save extends Component {
       return
     }
     this.setState({ saving: true })
-    fetch('http://localhost:1234/cyndex2/v1/networks/current', {
+    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/current', {
       method: method,
       headers: {
         'Accept': 'application/json',
@@ -101,7 +101,7 @@ class Save extends Component {
   }
 
   saveImage(networkId, uuid) {
-    fetch('http://localhost:1234/v1/networks/' + networkId + '/views/first.png')
+    fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
     .then((blob) => {
       fetch('http://v1.image-uploader.cytoscape.io/' + uuid, {
@@ -116,7 +116,10 @@ class Save extends Component {
             throw new Error(resp.statusText)
           }
           this.setState({saving: false, 'uuid':uuid, 'success': true})
-      })
+      }).catch((error) => {
+        alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
+        this.setState({saving: false, 'uuid':uuid, 'success': true})
+      });
     }).catch((error) => {
       alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
       this.setState({saving: false, 'uuid':uuid, 'success': true})

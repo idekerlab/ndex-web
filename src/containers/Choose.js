@@ -117,7 +117,7 @@ class Choose extends Component {
       serverUrl: serverAddress + '/v2',
       uuid: networkId
     })
-    fetch('http://localhost:1234/cyndex2/v1/networks', {
+    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
