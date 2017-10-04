@@ -47,7 +47,11 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
           <img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} title="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>
         </div>
       </div>
-      <img className="Card-image" src={getImage(id)} onError={(err) => err.target.src='/no_network_image.png' }/>
+      <img className="Card-image" src={getImage(id)} onError={(err) => {
+        err.target.src='/no_network_image.png';
+        err.target.onError="this.src=''";
+        }
+      }/>
       <div className="Card-content">
         <h5 className="Card-content-title">
           {name}
