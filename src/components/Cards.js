@@ -48,8 +48,8 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
         </div>
       </div>
       <img className="Card-image" src={getImage(id)} onError={(err) => {
-        err.target.src='/no_network_image.png';
         err.target.onError="this.src=''";
+        err.target.src='/no_network_image.png';
         }
       }/>
       <div className="Card-content">

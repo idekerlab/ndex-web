@@ -88,16 +88,18 @@ class Save extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         if ((resp.errors.length) !== 0) {
-          alert("Error saving: " + JSON.stringify(resp).errors[0].message || "Unknown")
+          alert("Error saving: " + resp.errors[0].message || "Unknown")
           this.setState({saving: false})
         } else {
           this.saveImage(resp.data.suid, resp.data.uuid)
         }
       })
-      .catch((error) => {
+
+			/*.catch((error) => {
+				alert(error)
         alert("There's something wrong with your connection and we could not save your network to NDEx.")
         this.setState({saving: false})
-      })
+      })*/
   }
 
   saveImage(networkId, uuid) {

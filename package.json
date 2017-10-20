@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "copy-to-clipboard": "^3.0.6",
-    "electron": "^1.7.2",
     "js-base64": "^2.1.9",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
