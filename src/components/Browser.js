@@ -11,13 +11,19 @@ class Browser extends Component {
     super()
     this.state = {
       view: 'Cards',
-      sort: 'name',
+      sort: 'relevance',
+			ascending: true,
       filter: '',
     }
     this.handleViewSelect = this.handleViewSelect.bind(this)
     this.handleSortSelect = this.handleSortSelect.bind(this)
     this.handleFilterChange = this.handleFilterChange.bind(this)
-  }
+  	this.handleToggleAscending = this.handleToggleAscending.bind(this)
+	}
+
+	handleToggleAscending(){
+		this.setState({ascending:!this.state.ascending})
+	}
 
   handleViewSelect(newView) {
     this.setState({view: newView})
@@ -31,23 +37,25 @@ class Browser extends Component {
     this.setState({filter: newFilter})
   }
 
-  sort(items) {
-    items.sort((item1, item2) => {
-      let a = item1[this.state.sort]
-      let b = item2[this.state.sort]
-      if (a === b) {
-        if (item1._id > item2._id) {
-          return -1
-        } else {
-          return 1
-        }
-      } else if (a < b) {
-        return -1
-      } else {
-        return 1
-      }
-    })
-    return items
+  sort(items, ascending) {
+		if (this.state.sort !== 'relevance'){
+			items.sort((item1, item2) => {
+				let a = item1[this.state.sort]
+				let b = item2[this.state.sort]
+				if (a === b) {
+					if (item1._id > item2._id) {
+						return -1
+					} else {
+						return 1
+					}
+				} else if (a < b) {
+					return -1
+				} else {
+					return 1
+				}
+			})
+		}
+    return ascending === true ? items : items.reverse()
   }
 
   filter(items) {
@@ -67,9 +75,10 @@ class Browser extends Component {
   render() {
     const views = {Cards: Cards, Table: Table}
     const fields = Object.keys(this.props.networks[0] || {})
-    const View = views[this.state.view]
-    const { sort, view, filter } = this.state
-    let items = this.sort(this.filter(this.props.networks))
+    fields.unshift('relevance')
+		const View = views[this.state.view]
+    const { sort, ascending, view, filter } = this.state
+		let items = this.sort(this.filter(this.props.networks.slice()), ascending)
     return (
       <div>
           <div className="Browser">
@@ -81,6 +90,9 @@ class Browser extends Component {
               sorts={fields}
               selectedSort={sort}
               onSortSelect={this.handleSortSelect}
+
+							ascending={ascending}
+							toggleAscending={this.handleToggleAscending}
 
               filter={filter}
               onFilterChange={this.handleFilterChange}

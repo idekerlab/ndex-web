@@ -48,9 +48,14 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
         </div>
       </div>
       <img className="Card-image" src={getImage(id)} onError={(err) => {
-        err.target.onError="this.src=''";
-        err.target.src='/no_network_image.png';
+        if (err.target.src === '/no_network_image.png'){
+					err.target.src = '';
+					err.target.onError=null;
+				}else{
+					err.target.src='/no_network_image.png';
+        	err.target.onError="this.src=''";
         }
+			}
       }/>
       <div className="Card-content">
         <h5 className="Card-content-title">
@@ -74,7 +79,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
 
 function getImage(id) {
   const url = "http://v1.storage.cytoscape.io/images/" + id + ".png"
-	return url; 
+	return url;
 }
 
 export default Cards

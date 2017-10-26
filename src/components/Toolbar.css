@@ -40,7 +40,19 @@
     border-right: none; /* Prevent double borders */
 }
 
+.Toolbar-view-buttons button:hover{
+	background:lightgray;
+}
+
 .Toolbar-sort {
+  height: 35px;
+  font-size: 1rem;
+  border: 1px solid #DFDFDF;
+  border-radius: 8px;
+  margin: 3px;
+}
+
+.Toolbar-order {
   height: 35px;
   font-size: 1rem;
   border: 1px solid #DFDFDF;

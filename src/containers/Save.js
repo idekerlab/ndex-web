@@ -23,7 +23,8 @@ class Save extends Component {
       reference: hydrate('reference'),
       description: hydrate('description'),
       uuid: hydrate('uuid'),
-      public: false,
+      writeCollection: hydrate("writeCollection"),
+			public: false,
       overwrite: false,
       success: false,
     }
@@ -70,7 +71,8 @@ class Save extends Component {
         uuid: newuuid,
         metadata: metadata,
         isPublic: this.state.public,
-     })
+    		writeCollection: this.state.writeCollection,
+		})
 
     if (userName === undefined || userName === "") {
       alert("You must be logged with your NDEx username to save a network.")

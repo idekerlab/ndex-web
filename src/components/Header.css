@@ -1,6 +1,7 @@
 
 .Header {
   padding: 8px;
+	line-height:initial;
 }
 
 .Header-title {
@@ -8,6 +9,7 @@
   margin: 0px;
   text-overflow: ellipsis;
   white-space: nowrap;
+	overflow-x: hidden;
 }
 
 .Header-subtitle {

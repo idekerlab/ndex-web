@@ -67,7 +67,7 @@ const ProfileBadge = ({profile, onClick}) => (
   >
     <img
       alt="ProfileBadge"
-      src={profile.img || defaultProfilePic}
+      src={profile.image || defaultProfilePic}
     />
     <div className="ProfileBadge-textblock">
       <h5>{profile.serverName || 'NDEx Public'}</h5>
@@ -96,11 +96,13 @@ const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onP
       }
       actions={[
         <DropdownAction
-          buttonId="addAccount"
+          key="add"
+					buttonId="addAccount"
 					label="Add Acount"
           onClick={() => onPageActivate('add')}
         />,
         <DropdownAction
+					key="signout"
 					buttonId="back"
           label="Sign out"
           onClick={() => onProfileLogout()}
@@ -168,13 +170,15 @@ class AddProfile extends Component {
           "Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
         })
       }).then((response) => {
-        if (response.ok) {
-          onPageActivate('select')
-          onProfileAdd(profile)
-        } else {
+				if (!response.ok) {
           this.setState({failed: true})
         }
-      }).catch((error) => {
+				return response.json()
+    	}).then((blob) => {
+        onPageActivate('select')
+				const newProfile = Object.assign(profile, {userId: blob.externalId, firstName: blob.firstName, image: blob.image})
+				onProfileAdd(newProfile)
+			}).catch((error) => {
         this.setState({failed: true})
       })
     }
@@ -217,11 +221,13 @@ class AddProfile extends Component {
         }
         actions={[
           <DropdownAction
+						key="add"
 						buttonId="addAccount"
 						label="Add Account"
             onClick={() => this.verifyLogin()}
           />,
           <DropdownAction
+						key="remove"
 						buttonId="back"
             label="Back"
             onClick={() => onPageActivate('select')}

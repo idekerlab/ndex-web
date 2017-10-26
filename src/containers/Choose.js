@@ -14,54 +14,25 @@ class Choose extends Component {
     super(props)
     this.state = {
       term: this.props.searchTerm,
-      numNetworks: 0,
-      networks: [],
+      numNetworks: -1,
+      searchMode: 'term',
+			networks: [],
       loading: false,
-      exampleTerms: [
-        {
-          text: 'melanoma',
-          description: 'Any mention of melanoma'
-        },
-        {
-          text: 'RBL2',
-          description: 'Any mention of RBL2'
-        },
-        {
-          text: 'uuid:2e67e8f0-3a6c-11e7-8f50-0ac135e8bacf',
-          description: 'Network by UUID'
-        },
-        {
-          text: 'nodeCount:[11 TO 79]',
-          description: 'By a numeric property range, a node count of 11 to 79 nodes'
-        },
-        {
-          text: 'TP53 AND BARD1',
-          description: 'A co-occurance of genes'
-        },
-        {
-          text: 'NCI AND edgeCount:[100 TO 300]',
-          description: 'Contains the term NCI and has between 100 to 300 edges'
-
-        },
-        {
-          text: 'creationTime:[2016-01-01T00:00:01Z TO 2016-04-27T23:59:59Z]',
-          description: 'Created between 1/1/16 and 4/27/16'
-        }
-      ]
     }
     this.handleSearch(this.props.searchTerm)
-  }
+	}
 
   handleTermChange = (term) => {
-    this.setState({ term })
+    this.setState({ term, networks:[], numNetworks: -1 })
   }
 
   componentDidMount() {
     document.title = "Browse NDEx";
   }
+
   handleSearch = (term = "") => {
     let profile = this.props.selectedProfile
-    let headers = { 'Content-Type': 'application/json'}
+		let headers = { 'Content-Type': 'application/json'}
     if (Object.keys(profile).length !== 0) {
       headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
@@ -78,23 +49,8 @@ class Choose extends Component {
       this.setState({numNetworks: blob.numFound})
       return blob.networks
     }).then((networks) => {
-      if (networks === undefined) {
-        networks = []
-      } else {
-        networks = networks.map((network) => ({
-            _id: network.externalId,
-            name: network.name,
-            description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
-            owner: network.owner,
-            visibility: network.visibility,
-            nodes: network.nodeCount,
-            edges: network.edgeCount,
-            created: network.creationTime,
-            modified: network.modificationTime,
-        }))
-      }
-        this.setState({ networks })
-    })
+      this.populate(networks)
+		})
     .catch((error) => {
       this.setState({networks : [], numNetworks: 0})
       alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
@@ -121,12 +77,12 @@ class Choose extends Component {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+				'Content-Type': 'application/json'
       },
       body: payload
     })
       .then((resp) => {
-        if (!resp.ok){
+				if (!resp.ok){
           throw new Error(resp.statusText)
         }
         return resp
@@ -136,10 +92,58 @@ class Choose extends Component {
         this.setState({ loading: false })
 			})
       .catch((error) => {
-        alert("There's something wrong with your connection and we were unable to import the network. Please try again after the issue has been resolved.")
+				alert("There's something wrong with your connection and we were unable to import the network.\nPlease try again after the issue has been resolved.")
         this.setState({loading:false})
       })
   }
+
+	populate = (networks) => {
+		if (networks === undefined) {
+			networks = []
+		} else {
+			networks = networks.map((network) => ({
+					_id: network.externalId,
+					name: network.name,
+					description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
+					owner: network.owner,
+					visibility: network.visibility,
+					nodes: network.nodeCount,
+					edges: network.edgeCount,
+					created: network.creationTime,
+					modified: network.modificationTime,
+			}))
+		}
+		this.setState({ networks })
+	}
+
+	handleMyNetworks = (newMode) => {
+		this.setState({searchMode: newMode})
+		if (newMode === 'term'){
+			this.handleSearch(this.state.term)
+			return
+		}
+		let profile = this.props.selectedProfile
+    let headers = { 'Content-Type': 'application/json'}
+    if (Object.keys(profile).length !== 0) {
+      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
+    }
+    if (profile.serverAddress === undefined) {
+      profile = { serverAddress: "http://ndexbio.org" }
+    }
+    fetch(profile.serverAddress + '/v2/user/' + profile.userId + '/networksummary', {
+      method: 'GET',
+      headers: new Headers(headers),
+    }).then((response) => {
+			return response.json()
+    }).then((networks) => {
+      this.setState({numNetworks: networks.length})
+    	this.populate(networks)
+		})
+    .catch((error) => {
+      this.setState({networks : [], numNetworks: 0})
+      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
+      })
+	}
 
   render() {
     const {
@@ -152,19 +156,21 @@ class Choose extends Component {
     } = this.props
     const {
       term,
+			searchMode,
       numNetworks,
       networks,
-      exampleTerms
     } = this.state
     const headerSuffix = term ? "for " + term : ""
-    const subtitle = numNetworks > 200 ? "Showing 200 out of " : ""
-    return (
+    const subtitle = numNetworks >= 0 ? ((numNetworks > 200 ? "Showing 200 out of " : "") + numNetworks + " hits") : "Loading results..."
+		return (
       <div className="Choose">
         { this.state.loading ? <Waiting text="Loading network from NDEx... Please wait."/> : null}
         <Navbar>
           <SearchBar
+						searchMode={searchMode}
             term={term}
-            examples={exampleTerms}
+						profileSelected={selectedProfile.hasOwnProperty('userId')}
+						handleMyNetworks={this.handleMyNetworks}
             handleTermChange={this.handleTermChange}
             handleSearch={this.handleSearch}
           />
@@ -182,7 +188,7 @@ class Choose extends Component {
         </Navbar>
         <Header
           title={"Search results " + headerSuffix}
-          subtitle={subtitle + numNetworks + " hits"}
+          subtitle={subtitle}
         />
         <Browser
           networks={networks}

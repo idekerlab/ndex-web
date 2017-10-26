@@ -70,6 +70,7 @@
 .Card-header-title {
   font-size: 1rem;
   margin: 0.8rem 0rem 0.8rem 0.4rem;
+	word-break: break-word;
   font-weight: normal;
 }
 

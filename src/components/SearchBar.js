@@ -4,7 +4,40 @@ import './SearchBar.css'
 const WAIT_INTERVAL = 1000
 const ENTER_KEY = 13
 
-export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
+const exampleTerms = [
+        {
+          text: 'melanoma',
+          description: 'Any mention of melanoma'
+        },
+        {
+          text: 'RBL2',
+          description: 'Any mention of RBL2'
+        },
+        {
+          text: 'uuid:2e67e8f0-3a6c-11e7-8f50-0ac135e8bacf',
+          description: 'Network by UUID'
+        },
+        {
+          text: 'nodeCount:[11 TO 79]',
+          description: 'By a numeric property range, a node count of 11 to 79 nodes'
+        },
+        {
+          text: 'TP53 AND BARD1',
+          description: 'A co-occurance of genes'
+        },
+        {
+          text: 'NCI AND edgeCount:[100 TO 300]',
+          description: 'Contains the term NCI and has between 100 to 300 edges'
+
+        },
+        {
+          text: 'creationTime:[2016-01-01T00:00:01Z TO 2016-04-27T23:59:59Z]',
+          description: 'Created between 1/1/16 and 4/27/16'
+        }
+      ]
+
+
+export const SearchBar = ({term, searchMode, profileSelected, handleMyNetworks, handleTermChange, handleSearch}) => {
   if (term === undefined)
 		term = ""
 	const handleKeyDown = (e) => {
@@ -22,10 +55,23 @@ export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
       handleSearch(value)
     }), WAIT_INTERVAL)
   }
-  return (
+	const searchExamples = exampleTerms.map(function(term, k){
+		return <li key={k}>
+			<a href="#" onClick={() => {
+				// This is a hack, so click events are handled like key changed events, and queued
+				handleChange({target: {value: term.text}})
+			}
+			}>{term.text}<br />
+				<span>{term.description}</span>
+			</a>
+		</li>;
+	})
+	const searching = searchMode === 'term'
+	return (
     <div className="Search">
       <input
-        className="SearchBar"
+        disabled={!searching}
+				className="SearchBar"
         type="text"
         placeholder="Enter search terms here..."
         results="0"
@@ -33,37 +79,18 @@ export const SearchBar = ({term, examples, handleTermChange, handleSearch}) => {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />
-      {term.length === 0 ?
-      <SearchDropdown
-        exampleTerms={examples}
-        onSearchtermChange={(term) => {
-          if (this.timer !== undefined) {
-            clearTimeout(this.timer)
-          }
-          handleTermChange(term)
-          handleSearch(term)
-        }}
-      />: null }
+			{profileSelected &&
+			<button
+				onClick={() => {handleMyNetworks(searching ? 'my networks' : 'term')}}
+				className={searching ? 'myNetworks' : 'myNetworks selected' }>
+				<span>My Networks</span>
+			</button>}
+			{term.length === 0 ?
+			<ul className="examples">
+				{searchExamples}
+			</ul>:null}
     </div>
   )
 }
-
-const SearchDropdown = ({exampleTerms, onSearchtermChange}) => (
-  <div className="SearchBar-dropdown">
-    <h5 className="SearchBar-dropdown-list-title">Sample Queries</h5>
-    <ul className="SearchBar-dropdown-list">
-    {exampleTerms.map((example, k) => (
-      <li
-				key={k}
-        className="SearchBar-dropdown-list-item"
-        onMouseDown={() => onSearchtermChange(example.text)}
-      >
-        <h6 className="SearchBar-dropdown-list-text">{example.text}</h6>
-        <p className="SearchBar-dropdown-list-subtext">{example.description}</p>
-      </li>
-    ))}
-    </ul>
-  </div>
-)
 
 export default SearchBar

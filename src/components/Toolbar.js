@@ -4,7 +4,8 @@ import './Toolbar.css'
 const Toolbar = ({
   views, selectedView, onViewSelect,
   sorts, selectedSort, onSortSelect,
-  filter, onFilterChange,
+	ascending, toggleAscending,
+	filter, onFilterChange,
 }) => {
   return (
     <div className="Toolbar">
@@ -20,7 +21,11 @@ const Toolbar = ({
           selectedSort={selectedSort}
           onSortSelect={onSortSelect}
         />
-        <FilterField
+        <select className="Toolbar-order" onChange={(v) => { console.log(ascending); toggleAscending(v.target.value) }} value={ascending}>
+					<option value={true}>Ascending</option>
+					<option value={false}>Descending</option>
+				</select>
+				<FilterField
           filter={filter}
           onFilterChange={onFilterChange}
         />
