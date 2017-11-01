@@ -16,6 +16,7 @@ class App extends Component {
       profiles: JSON.parse(window.localStorage.getItem('profiles')) || [],
       selectedProfile: JSON.parse(window.localStorage.getItem('selectedProfile')) || {},
     }
+		//handle user profiles with missing userId
     this.loadComponentConfig()
   }
 
@@ -39,9 +40,13 @@ class App extends Component {
   }
 
   handleProfileSelect = (profile) => {
-    this.setState({selectedProfile: profile})
-    window.localStorage.setItem('selectedProfile', JSON.stringify(profile))
-  }
+    if (!profile.hasOwnProperty('userId')){
+    	this.updateProfile(profile)
+		}else{
+			this.setState({selectedProfile: profile})
+   		window.localStorage.setItem('selectedProfile', JSON.stringify(profile))
+		}
+	}
 
   handleProfileAdd = (profile) => {
     this.state.profiles.push(profile)
@@ -68,6 +73,39 @@ class App extends Component {
     window.localStorage.setItem('selectedProfile', '{}')
   }
 
+	updateProfile(profile){
+		const main = this
+		if (profile.hasOwnProperty('serverAddress') && profile.hasOwnProperty('userName') && !profile.hasOwnProperty('userId')){
+			fetch(profile.serverAddress + "/v2/user?valid=true", {
+				headers: new Headers({
+					"Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
+				})
+			}).then((response) => {
+				if (!response.ok) {
+					throw Error()
+				}
+				return response.json()
+			}).then((blob) => {
+				const newProfile = Object.assign(profile, {userId: blob.externalId, firstName: blob.firstName, image: blob.image})
+    		const profiles = main.state.profiles.filter((p) => p !== profile)
+				profiles.push(newProfile)
+    		main.setState({ profiles, selectedProfile: newProfile })
+    		window.localStorage.setItem('profiles', JSON.stringify(profiles))
+				window.localStorage.setItem('selectedProfile', JSON.stringify(newProfile))
+			}).catch((error) => {
+				alert("Unable to update profile from NDEx. Try logging in again")
+				main.handleProfileLogout(profile)
+				main.handleProfileDelete(profile)
+			})
+		}
+	}
+
+	componentDidMount(){
+		if (this.state.selectedProfile){
+			this.handleProfileSelect(this.state.selectedProfile)
+		}
+	}
+
   render() {
     const components = {
       error: Error,
@@ -81,7 +119,7 @@ class App extends Component {
       handleProfileAdd: this.handleProfileAdd,
       handleProfileDelete:this.handleProfileDelete,
       handleProfileLogout: this.handleProfileLogout
-    }
+		}
     const Component = components[this.state.component]
     return (
       <div className="App">

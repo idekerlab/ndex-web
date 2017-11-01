@@ -106,6 +106,7 @@
   margin: 0.5rem 0 0 0;
   font-weight: bold;
   font-size: 1rem;
+	word-break: break-word;
 }
 
 .Card-content-last-activity {

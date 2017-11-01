@@ -12,30 +12,84 @@ class Save extends Component {
     super(props)
     const hydrate = (field) => this.props[field] || ''
     this.state = {
-      name: this.props.name,
-      saving: false,
+      name: hydrate('name'),
+			saving: false,
+			uuid: hydrate('uuid'),
       author: hydrate('author'),
       organism: hydrate('organism'),
       disease: hydrate('disease'),
       tissue: hydrate('tissue'),
       rightsHolder: hydrate('rightsHolder'),
-      rights: hydrate('rights'),
-      reference: hydrate('reference'),
+      version: hydrate('version'),
+			reference: hydrate('reference'),
       description: hydrate('description'),
-      uuid: hydrate('uuid'),
-      writeCollection: hydrate("writeCollection"),
+			saveType: 'collection',
 			public: false,
-      overwrite: false,
+			updatable: false,
+			overwrite: false,
       success: false,
     }
-    if (this.props.createdFromSingleton) {
-      alert("This network does not exist on NDEx as a collection, it cannot be overwritten \n(otherwise your NDEx network will not be readable/writeable to anyone \nbut Cytoscape). Instead, it will be saved as a new network.")
-    }
+		this.networkData = {}
   }
+
+	checkPermissions = (profile, saveType) => {
+		const main = this;
+		saveType = saveType || this.state.saveType
+		if (profile.userId && this.networkData[saveType] && this.networkData[saveType]['uuid']){
+			const uuid = this.networkData[saveType]['uuid']
+			const userId = profile.userId
+			const ndexUrl = profile.serverAddress
+			const headers = {
+        	'Accept': 'application/json',
+        	'Content-Type': 'application/json',
+					'Authorization': 'Basic ' + btoa(profile.userName + ":" + profile.password)
+      	}
+			fetch(ndexUrl + '/v2/user/' + userId + '/permission?networkid=' + uuid, {
+				method: 'GET',
+      	headers: headers
+			})
+			.then((resp) => resp.json())
+			.then((resp) => {
+				main.setState({updatable: resp[uuid] === 'ADMIN' || resp[uuid] === 'WRITE'})
+			}).catch((ex) => {
+				main.setState({updatable: false})
+			})
+		} else {
+				this.setState({updatable: false})
+		}
+	}
+
+	componentWillReceiveProps(props) {
+		this.checkPermissions(props.selectedProfile)
+	}
+
+	loadData(){
+		const main = this;
+		fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/current')
+		.then((resp) => resp.json())
+		.then((resp) => {
+			let newData = {
+				"collection": resp['data']['currentRootNetwork']
+			}
+			resp['data']['members'].forEach((member) => {
+				if (member['suid'] === resp['data']['currentNetworkSuid']){
+					newData['network'] = member
+				}
+			})
+			main.networkData = newData
+		}).then(() => {
+			main.getAttributes()
+			main.checkPermissions(main.props.selectedProfile)
+		})
+	}
+
+	componentWillMount(){
+		this.loadData()
+	}
 
   componentDidMount() {
     document.title = "Save to NDEx";
-  }
+	}
 
   closeWindow() {
   	window.frame.setVisible(false);
@@ -47,39 +101,37 @@ class Save extends Component {
       userName,
       password,
     } = this.props.selectedProfile
-    let newuuid = ''
     let method = 'POST'
     if (this.state.overwrite) {
-      newuuid = this.props.uuid
       method = 'PUT'
     }
     const metadata = {
       name: this.state.name,
       author: this.state.author,
       organism: this.state.organism,
-      disease: this.state.disease,
+      version: this.state.version,
+			disease: this.state.disease,
       tissue: this.state.tissue,
       rightsHolder: this.state.rightsHolder,
-      rights: this.state.rights,
       reference: this.state.reference,
       description: this.state.description,
     }
     const payload = JSON.stringify({
-        userId: userName,
+        username: userName,
         password: password,
         serverUrl: serverAddress + '/v2',
-        uuid: newuuid,
         metadata: metadata,
         isPublic: this.state.public,
-    		writeCollection: this.state.writeCollection,
 		})
+
+		const suid = this.networkData[this.state.saveType]['suid']
 
     if (userName === undefined || userName === "") {
       alert("You must be logged with your NDEx username to save a network.")
       return
     }
     this.setState({ saving: true })
-    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/current', {
+    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/' + suid, {
       method: method,
       headers: {
         'Accept': 'application/json',
@@ -142,6 +194,7 @@ class Save extends Component {
     this.setState({ public: !this.state.public })
   }
 
+
   handleFieldChange(field) {
     return (e) => {
       let newState = {
@@ -150,6 +203,26 @@ class Save extends Component {
       this.setState(newState)
     }
   }
+
+	getAttributes = (saveType) => {
+		saveType = saveType || this.state.saveType
+		if (!this.networkData.hasOwnProperty(saveType))
+			return {}
+		const net = this.networkData[saveType]
+		this.setState({
+			author: net['props']['author'] || '',
+			organism: net['props']['organism'] || '',
+			disease: net['props']['disease'] || '',
+			tissue: net['props']['tissue'] || '',
+			rightsHolder: net['props']['rightsHolder'] || '',
+			version: net['props']['version'] || '',
+			reference: net['props']['reference'] || '',
+			description: net['props']['description'] || '',
+			name: net['name'] || '',
+			saveType: saveType,
+		})
+		this.checkPermissions(this.props.selectedProfile, saveType)
+	}
 
   render() {
     const {
@@ -160,9 +233,10 @@ class Save extends Component {
       handleProfileDelete,
       handleProfileLogout
     } = this.props
-    console.log("Saving")
-    console.log(this.props)
-    return (
+
+		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') || (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
+
+		return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
         {this.state.success &&
@@ -213,10 +287,11 @@ class Save extends Component {
               label="Rights Holder"
             />
             <LabelField
-               value={this.state.rights}
-               onChange={this.handleFieldChange('rights')}
-               label="Rights"
-             />
+              value={this.state.version}
+              onChange={this.handleFieldChange('version')}
+              label="Version"
+							required={this.state.public}
+            />
             <TextareaField
               value={this.state.reference}
               onChange={this.handleFieldChange('reference')}
@@ -228,8 +303,16 @@ class Save extends Component {
               value={this.state.description}
               onChange={this.handleFieldChange('description')}
               label="Description"
+							required={this.state.public}
             />
             <div className="Save-visibility">
+							<h3>Export</h3>
+							<select  className="Save-dropdown" value={this.state.saveType} onChange={(e) => this.getAttributes(e.target.value)}>
+								<option value="collection">Entire Collection</option>
+								<option value="network">Single Subnetwork</option>
+							</select>
+						</div>
+						<div className="Save-visibility">
               <h3>Save as Public?</h3>
               <input
                  type="checkbox"
@@ -239,7 +322,7 @@ class Save extends Component {
             </div>
             <div className="Save-visibility">
               <h3>Save as a New Network?</h3>
-              {this.state.uuid !== "" ?
+              {this.state.updatable ?
               <input
                  type="checkbox"
                  value={!this.state.overwrite}
@@ -253,7 +336,7 @@ class Save extends Component {
         </div>
         <div className="Save-actionbar">
           <h5 className="Save-actionbar-label">
-            Network Name:
+			{this.state.saveType.charAt(0).toUpperCase() + this.state.saveType.slice(1)} Name:
           </h5>
           <input
              type="text"
@@ -264,7 +347,7 @@ class Save extends Component {
           <button onClick={this.closeWindow}>
             Cancel
           </button>
-          <button onClick={() => this.onSave()}>
+          <button title={!this.props.selectedProfile.hasOwnProperty('serverAddress') ? 'Sign in to save a network' : this.state.public ? "Name, version, and description are required to save public networks" : ""} onClick={() => this.onSave()} disabled={disableSave}>
            Save
           </button>
         </div>
@@ -274,17 +357,17 @@ class Save extends Component {
 
 }
 
-const LabelField = ({label, value, onChange}) => (
+const LabelField = ({label, value, onChange, required}) => (
   <div className="Save-labelfield">
-    <label>{label.toUpperCase()}</label>
-    <input type="text" value={value} onChange={onChange} placeholder={label + "..."}/>
+    <label>{label.toUpperCase() + (required ? "*" : "")}</label>
+    <input className={required === true ? "required" : ""} type="text" value={value} onChange={onChange} placeholder={label + "..."}/>
   </div>
 )
 
-const TextareaField = ({label, value, onChange}) => (
+const TextareaField = ({label, value, onChange, required}) => (
   <div className="Save-textareafield">
-    <label>{label.toUpperCase()}</label>
-    <textarea value={value} onChange={onChange} placeholder={"Enter your " + label.toLowerCase() + " here..."}/>
+    <label>{label.toUpperCase() + (required ? "*" : "")}</label>
+    <textarea className={required === true ? "required" : ""} value={value} onChange={onChange} placeholder={"Enter your " + label.toLowerCase() + " here..."}/>
   </div>
 )
 

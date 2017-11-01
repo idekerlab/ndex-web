@@ -8,6 +8,20 @@ import SearchBar from '../components/SearchBar'
 import Header from '../components/Header'
 import Waiting from '../components/Waiting'
 
+function filter(items, term) {
+	if (term !== "") {
+		return items.filter((item) => {
+			for (var key in item) {
+				if (String(item[key]).toLowerCase().includes(term.toLowerCase())) {
+					return true
+				}
+			}
+			return false
+		})
+	}
+	return items
+}
+
 class Choose extends Component {
 
   constructor(props) {
@@ -15,11 +29,10 @@ class Choose extends Component {
     this.state = {
       term: this.props.searchTerm,
       numNetworks: -1,
-      searchMode: 'term',
+      searchMode: 'all',
 			networks: [],
       loading: false,
-    }
-    this.handleSearch(this.props.searchTerm)
+		}
 	}
 
   handleTermChange = (term) => {
@@ -28,18 +41,38 @@ class Choose extends Component {
 
   componentDidMount() {
     document.title = "Browse NDEx";
+    this.handleSearch()
   }
 
-  handleSearch = (term = "") => {
+	signedIn = () => {
+		return this.props.selectedProfile.hasOwnProperty('userId')
+	}
+
+  handleSearch = (mode, address) => {
+
+		mode = (mode === 'all' || mode === 'mine') ? mode : this.state.searchMode
+		this.setState((old) => { return {networks: [], numNetworks: -1, searchMode: mode}})
+		address = address || this.props.selectedProfile.serverAddress
+		if (!this.signedIn() || mode === 'all'){
+			this.handleSearchTerm(this.state.term, address)
+			return
+		}else{
+			this.handleGetMyNetworks(this.state.term)
+		}
+	}
+
+	handleSearchTerm = (term = "", address) => {
     let profile = this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
     if (Object.keys(profile).length !== 0) {
       headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
-    if (profile.serverAddress === undefined) {
-      profile = { serverAddress: "http://ndexbio.org" }
+		address = address || profile.serverAddress
+
+    if (address === undefined) {
+      address = "http://ndexbio.org"
     }
-    fetch(profile.serverAddress + '/v2/search/network?size=200', {
+    fetch(address + '/v2/search/network?size=200', {
       method: 'POST',
       body: JSON.stringify({ searchString: term }),
       headers: new Headers(headers),
@@ -50,11 +83,10 @@ class Choose extends Component {
       return blob.networks
     }).then((networks) => {
       this.populate(networks)
-		})
-    .catch((error) => {
+		}).catch((error) => {
       this.setState({networks : [], numNetworks: 0})
       alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
-      })
+    })
   }
 
   handleDownloadNetwork(networkId) {
@@ -68,7 +100,7 @@ class Choose extends Component {
       serverAddress = "http://ndexbio.org"
     }
     const payload = JSON.stringify({
-      userId: userName,
+      username: userName,
       password: password,
       serverUrl: serverAddress + '/v2',
       uuid: networkId
@@ -116,12 +148,18 @@ class Choose extends Component {
 		this.setState({ networks })
 	}
 
-	handleMyNetworks = (newMode) => {
-		this.setState({searchMode: newMode})
-		if (newMode === 'term'){
-			this.handleSearch(this.state.term)
-			return
+	componentWillReceiveProps(newProps){
+		if (!newProps['selectedProfile']){
+			this.handleSearch('all', 'http://ndexbio.org')
 		}
+	}
+
+	handleSearchMode = (newMode) => {
+		this.setState({searchMode: newMode})
+		this.handleSearch(newMode)
+	}
+
+	handleGetMyNetworks = (term) => {
 		let profile = this.props.selectedProfile
     let headers = { 'Content-Type': 'application/json'}
     if (Object.keys(profile).length !== 0) {
@@ -136,11 +174,12 @@ class Choose extends Component {
     }).then((response) => {
 			return response.json()
     }).then((networks) => {
-      this.setState({numNetworks: networks.length})
+      networks = filter(networks, term)
+			this.setState({numNetworks: networks.length})
     	this.populate(networks)
 		})
     .catch((error) => {
-      this.setState({networks : [], numNetworks: 0})
+			this.setState({networks : [], numNetworks: 0})
       alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
       })
 	}
@@ -167,23 +206,27 @@ class Choose extends Component {
         { this.state.loading ? <Waiting text="Loading network from NDEx... Please wait."/> : null}
         <Navbar>
           <SearchBar
-						searchMode={searchMode}
+						disabled={searchMode === 'mine'}
             term={term}
-						profileSelected={selectedProfile.hasOwnProperty('userId')}
-						handleMyNetworks={this.handleMyNetworks}
             handleTermChange={this.handleTermChange}
             handleSearch={this.handleSearch}
           />
           <Profile
             profiles={profiles}
             selectedProfile={selectedProfile}
-            onProfileAdd={handleProfileAdd}
-            onProfileSelect={handleProfileSelect}
+            onProfileAdd={(p) => {
+							handleProfileAdd(p)
+							this.handleSearch(this.state.searchMode, p.serverAddress)
+						}}
+            onProfileSelect={(p) => {
+							handleProfileSelect(p)
+							this.handleSearch(this.state.searchMode, p.serverAddress)
+						}}
             onProfileDelete={handleProfileDelete}
             onProfileLogout={() => {
-              handleProfileLogout()
-              this.handleSearch(term)
-            }}
+							handleProfileLogout()
+							this.handleSearch('all', 'http://ndexbio.org')
+						}}
           />
         </Navbar>
         <Header
@@ -191,9 +234,13 @@ class Choose extends Component {
           subtitle={subtitle}
         />
         <Browser
-          networks={networks}
+					searchMode={searchMode}
+					handleSearchMode={this.handleSearchMode}
+					profileSelected={selectedProfile.hasOwnProperty('userId')}
+
+					networks={networks}
           onNetworkDownload={(networkId) => this.handleDownloadNetwork(networkId)}
-        />
+				/>
       </div>
     )
   }

@@ -14,38 +14,9 @@
   width: 100%;
 }
 
-.Search .myNetworks {
-	position:absolute;
-	right: 20px;
-	border: 1px solid #222;
-	color: #222;
-	border-radius: 8px;
-	align-self: center;
-	cursor: pointer;
-	padding: 7px 10px;
-	transition-duration: .4s;
-	background: white;
-}
 
 .SearchBar:disabled {
 	background: #ddd;
-}
-
-.Search .myNetworks:hover {
-	background: #ddd;
-}
-
-.Search .myNetworks.selected:hover {
-	background: #555;
-}
-
-.Search .myNetworks.selected {
-	background: #444;
-	color:white;
-}
-
-.Search .myNetworks span {
-	display: inline-block;
 }
 
 /* * Copyright (c) 2012 Thibaut Courouble

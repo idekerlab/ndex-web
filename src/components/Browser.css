@@ -8,11 +8,6 @@
   top: 184px;
 }
 
-@media (max-width: 640px) {
-  .Browser-view {
-    top: 166px;
-  }
-}
 
 .Browser-empty-view {
   position: absolute;

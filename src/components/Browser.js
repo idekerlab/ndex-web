@@ -13,16 +13,14 @@ class Browser extends Component {
       view: 'Cards',
       sort: 'relevance',
 			ascending: true,
-      filter: '',
-    }
+		}
     this.handleViewSelect = this.handleViewSelect.bind(this)
     this.handleSortSelect = this.handleSortSelect.bind(this)
-    this.handleFilterChange = this.handleFilterChange.bind(this)
   	this.handleToggleAscending = this.handleToggleAscending.bind(this)
 	}
 
-	handleToggleAscending(){
-		this.setState({ascending:!this.state.ascending})
+	handleToggleAscending(newAscending){
+		this.setState({ascending:newAscending})
 	}
 
   handleViewSelect(newView) {
@@ -31,10 +29,6 @@ class Browser extends Component {
 
   handleSortSelect(newSort) {
     this.setState({sort: newSort})
-  }
-
-  handleFilterChange(newFilter) {
-    this.setState({filter: newFilter})
   }
 
   sort(items, ascending) {
@@ -58,27 +52,14 @@ class Browser extends Component {
     return ascending === true ? items : items.reverse()
   }
 
-  filter(items) {
-    if (this.state.filter !== "") {
-      return items.filter((item) => {
-        for (var key in item) {
-          if (String(item[key]).toLowerCase().includes(this.state.filter.toLowerCase())) {
-            return true
-          }
-        }
-        return false
-      })
-    }
-    return items
-  }
 
   render() {
     const views = {Cards: Cards, Table: Table}
     const fields = Object.keys(this.props.networks[0] || {})
     fields.unshift('relevance')
 		const View = views[this.state.view]
-    const { sort, ascending, view, filter } = this.state
-		let items = this.sort(this.filter(this.props.networks.slice()), ascending)
+    const { sort, ascending, view } = this.state
+		let items = this.sort(this.props.networks.slice(), ascending)
     return (
       <div>
           <div className="Browser">
@@ -94,9 +75,11 @@ class Browser extends Component {
 							ascending={ascending}
 							toggleAscending={this.handleToggleAscending}
 
-              filter={filter}
-              onFilterChange={this.handleFilterChange}
-            />
+							profileSelected={this.props.profileSelected}
+							searchMode={this.props.searchMode}
+							handleSearchMode={this.props.handleSearchMode}
+
+						/>
             {items.length ?
             <div className="Browser-view">
               <View items={items} onNetworkDownload={this.props.onNetworkDownload}/>

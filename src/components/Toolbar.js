@@ -5,8 +5,10 @@ const Toolbar = ({
   views, selectedView, onViewSelect,
   sorts, selectedSort, onSortSelect,
 	ascending, toggleAscending,
-	filter, onFilterChange,
+	searchMode, handleSearchMode, profileSelected
 }) => {
+	if (!profileSelected)
+		searchMode='all'
   return (
     <div className="Toolbar">
       <ViewButtonCluster
@@ -14,21 +16,21 @@ const Toolbar = ({
         selectedView={selectedView}
         onViewSelect={onViewSelect}
       />
-      <div>
-        <SortSelector
-          sorts={sorts}
-          sortsFilter={(sort) => sort !== "_id" && sort !== "description"}
-          selectedSort={selectedSort}
-          onSortSelect={onSortSelect}
-        />
-        <select className="Toolbar-order" onChange={(v) => { console.log(ascending); toggleAscending(v.target.value) }} value={ascending}>
-					<option value={true}>Ascending</option>
-					<option value={false}>Descending</option>
+      <div className="Toolbar-view-dropdowns">
+				<select className="Toolbar-searchMode Toolbar-dropdown" disabled={!profileSelected} value={searchMode} onChange={(v) => {handleSearchMode(v.target.value)}}>
+					<option value="all">All Networks</option>
+					<option value="mine">My Networks</option>
 				</select>
-				<FilterField
-          filter={filter}
-          onFilterChange={onFilterChange}
-        />
+				<SortSelector
+         sorts={sorts}
+         sortsFilter={(sort) => sort !== "_id" && sort !== "description"}
+         selectedSort={selectedSort}
+         onSortSelect={onSortSelect}
+       	/>
+       	<select className="Toolbar-order Toolbar-dropdown" onChange={(v) => {toggleAscending(v.target.value === "ascending") }} value={ascending ? "ascending" : "descending"}>
+					<option value={"ascending"}>Ascending</option>
+					<option value={"descending"}>Descending</option>
+				</select>
       </div>
     </div>
   )
@@ -49,22 +51,12 @@ const ViewButtonCluster = ({views, selectedView, onViewSelect}) => (
 
 const SortSelector = ({sorts, sortsFilter, selectedSort, onSortSelect}) => (
   <select
-    className="Toolbar-sort"
+    className="Toolbar-sort Toolbar-dropdown"
     value={selectedSort}
     onChange={(event) => onSortSelect(event.target.value)}
   >
     {(sorts.filter(sortsFilter)).map((sort, index) => <option key={index} value={sort}>Sort by {sort}</option>)}
   </select>
-)
-
-const FilterField = ({filter, onFilterChange}) => (
-  <input
-    className="Toolbar-filter"
-    type="text"
-    placeholder="Enter filter..."
-    value={filter}
-    onChange={(event) => onFilterChange(event.target.value)}
-  />
 )
 
 export default Toolbar

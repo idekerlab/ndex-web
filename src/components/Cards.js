@@ -71,7 +71,10 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
         { description ? <p className="Card-content-description">
           {description}
         </p> : null }
-        <button className="Card-content-download" onClick={() => onNetworkDownload(id)}>Import</button>
+        <button className="Card-content-download" onClick={() => {
+						onNetworkDownload(id)
+					}
+				}>Import</button>
       </div>
     </div>
   </div>

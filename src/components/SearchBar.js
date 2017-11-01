@@ -1,7 +1,7 @@
 import React from 'react'
 import './SearchBar.css'
 
-const WAIT_INTERVAL = 1000
+const WAIT_INTERVAL = 2000
 const ENTER_KEY = 13
 
 const exampleTerms = [
@@ -37,11 +37,14 @@ const exampleTerms = [
       ]
 
 
-export const SearchBar = ({term, searchMode, profileSelected, handleMyNetworks, handleTermChange, handleSearch}) => {
+export const SearchBar = ({term, profileSelected, handleTermChange, handleSearch, disabled}) => {
   if (term === undefined)
 		term = ""
 	const handleKeyDown = (e) => {
     if (e.keyCode === ENTER_KEY) {
+    	if (this.timer !== undefined) {
+      	clearTimeout(this.timer)
+    	}
       handleSearch(e.target.value)
     }
   }
@@ -57,7 +60,7 @@ export const SearchBar = ({term, searchMode, profileSelected, handleMyNetworks, 
   }
 	const searchExamples = exampleTerms.map(function(term, k){
 		return <li key={k}>
-			<a href="#" onClick={() => {
+			<a onClick={() => {
 				// This is a hack, so click events are handled like key changed events, and queued
 				handleChange({target: {value: term.text}})
 			}
@@ -66,25 +69,18 @@ export const SearchBar = ({term, searchMode, profileSelected, handleMyNetworks, 
 			</a>
 		</li>;
 	})
-	const searching = searchMode === 'term'
 	return (
     <div className="Search">
       <input
-        disabled={!searching}
 				className="SearchBar"
-        type="text"
+        disabled={disabled}
+				type="text"
         placeholder="Enter search terms here..."
         results="0"
         value={term}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-      />
-			{profileSelected &&
-			<button
-				onClick={() => {handleMyNetworks(searching ? 'my networks' : 'term')}}
-				className={searching ? 'myNetworks' : 'myNetworks selected' }>
-				<span>My Networks</span>
-			</button>}
+			/>
 			{term.length === 0 ?
 			<ul className="examples">
 				{searchExamples}

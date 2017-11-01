@@ -36,7 +36,7 @@ class Profile extends Component {
       profiles, selectedProfile,
       onProfileAdd, onProfileSelect, onProfileDelete, onProfileLogout
     } = this.props
-    return (
+		return (
       <div className="Profile">
         <ProfileBadge
           onClick={() => this.openDropdown()}
@@ -61,7 +61,7 @@ class Profile extends Component {
 }
 
 const ProfileBadge = ({profile, onClick}) => (
-  <div
+	<div
     className="ProfileBadge"
     onMouseDown={onClick}
   >
@@ -70,8 +70,8 @@ const ProfileBadge = ({profile, onClick}) => (
       src={profile.image || defaultProfilePic}
     />
     <div className="ProfileBadge-textblock">
-      <h5>{profile.serverName || 'NDEx Public'}</h5>
-      <h6>{profile.userName || 'Anonymous'}</h6>
+      <h5>{profile.userName || 'Anonymous'}</h5>
+      <h6>{profile.serverName || 'NDEx Public'}</h6>
     </div>
   </div>
 )
@@ -87,7 +87,13 @@ const ProfileDropdown = ({ActivePage, isOpen, ...rest}) => (
 const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => {
   const  profileButtons = (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName))
               .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
-  return (
+  const signOut = selectedProfile.serverAddress === undefined ? null : <DropdownAction
+					key="signout"
+					buttonId="back"
+          label="Sign out"
+          onClick={() => onProfileLogout()}
+				/>
+	return (
     <Dropdown
       title="Select Profile"
       content={profileButtons.length !== 0 ?
@@ -101,13 +107,8 @@ const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onP
 					label="Add Acount"
           onClick={() => onPageActivate('add')}
         />,
-        <DropdownAction
-					key="signout"
-					buttonId="back"
-          label="Sign out"
-          onClick={() => onProfileLogout()}
-        />
-      ]}
+      	signOut
+			]}
     />
   )
 }
@@ -172,7 +173,8 @@ class AddProfile extends Component {
       }).then((response) => {
 				if (!response.ok) {
           this.setState({failed: true})
-        }
+        	throw Error()
+				}
 				return response.json()
     	}).then((blob) => {
         onPageActivate('select')

@@ -2,6 +2,7 @@
 .Header {
   padding: 8px;
 	line-height:initial;
+	height: 52px;
 }
 
 .Header-title {
