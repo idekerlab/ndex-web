@@ -120,7 +120,6 @@ class App extends Component {
       handleProfileDelete:this.handleProfileDelete,
       handleProfileLogout: this.handleProfileLogout
 		}
-		console.log("COMPONENT: " + this.state.component)
     const Component = components[this.state.component]
     return (
       <div className="App">
