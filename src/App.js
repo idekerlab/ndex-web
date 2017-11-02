@@ -17,7 +17,6 @@ class App extends Component {
       selectedProfile: JSON.parse(window.localStorage.getItem('selectedProfile')) || {},
     }
 		//handle user profiles with missing userId
-    this.loadComponentConfig()
   }
 
   loadComponentConfig() {
@@ -101,9 +100,10 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		if (this.state.selectedProfile){
+		if (this.state.selectedProfile.hasOwnProperty('userName')){
 			this.handleProfileSelect(this.state.selectedProfile)
 		}
+    this.loadComponentConfig()
 	}
 
   render() {
@@ -120,6 +120,7 @@ class App extends Component {
       handleProfileDelete:this.handleProfileDelete,
       handleProfileLogout: this.handleProfileLogout
 		}
+		console.log("COMPONENT: " + this.state.component)
     const Component = components[this.state.component]
     return (
       <div className="App">

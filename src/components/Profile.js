@@ -71,7 +71,7 @@ const ProfileBadge = ({profile, onClick}) => (
     />
     <div className="ProfileBadge-textblock">
       <h5>{profile.userName || 'Anonymous'}</h5>
-      <h6>{profile.serverName || 'NDEx Public'}</h6>
+      <h6>{profile.serverAddress && profile.serverAddress.substr(7) || 'NDEx Public'}</h6>
     </div>
   </div>
 )
@@ -85,7 +85,7 @@ const ProfileDropdown = ({ActivePage, isOpen, ...rest}) => (
 )
 
 const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => {
-  const  profileButtons = (profiles.filter((profile) => profile.serverName !== selectedProfile.serverName))
+  const  profileButtons = (profiles.filter((profile) => { return !(profile.userName == selectedProfile.userName && profile.serverAddress == selectedProfile.serverAddress) } ))
               .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
   const signOut = selectedProfile.serverAddress === undefined ? null : <DropdownAction
 					key="signout"
@@ -136,7 +136,6 @@ class AddProfile extends Component {
     super()
     this.state = {
       failed: false,
-      serverName: "",
       serverAddress: "",
       userName: "",
       password: "",
@@ -160,10 +159,11 @@ class AddProfile extends Component {
 		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
         profile.serverAddress = "http://" + profile.serverAddress
     }
-    const filtered = this.props.profiles.filter((p) => p.serverName === profile.serverName)
+
+    const filtered = this.props.profiles.filter((p) => p.serverAddress === profile.serverAddress && p.userName === profile.userName)
     if (filtered.length !== 0) {
       this.setState({failed: true})
-    } else if (profile.serverAddress === "" || profile.serverName === "") {
+    } else if (profile.serverAddress === "" || profile.userName === "" || profile.password === "") {
       this.setState({failed: true})
     } else {
       fetch(profile.serverAddress + "/v2/user?valid=true", {
@@ -193,11 +193,6 @@ class AddProfile extends Component {
         title="Add Profile"
         content={
           <div className="AddProfile-input">
-            <p>Enter a profile name</p>
-            <input
-              placeholder="Profile Name"
-              onChange={this.handleFieldChange("serverName")}
-            />
             <p>Enter the address of an NDEx Server</p>
             <input
               placeholder="Server Address (default: http://ndexbio.org)"

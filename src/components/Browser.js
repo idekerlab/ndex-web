@@ -12,7 +12,7 @@ class Browser extends Component {
     this.state = {
       view: 'Cards',
       sort: 'relevance',
-			ascending: true,
+			ascending: false,
 		}
     this.handleViewSelect = this.handleViewSelect.bind(this)
     this.handleSortSelect = this.handleSortSelect.bind(this)

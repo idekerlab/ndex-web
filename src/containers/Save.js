@@ -13,7 +13,6 @@ class Save extends Component {
     const hydrate = (field) => this.props[field] || ''
     this.state = {
       name: hydrate('name'),
-			saving: false,
 			uuid: hydrate('uuid'),
       author: hydrate('author'),
       organism: hydrate('organism'),
@@ -23,7 +22,8 @@ class Save extends Component {
       version: hydrate('version'),
 			reference: hydrate('reference'),
       description: hydrate('description'),
-			saveType: 'collection',
+			saveType: 'network',
+			saving: false,
 			public: false,
 			updatable: false,
 			overwrite: false,
@@ -309,7 +309,7 @@ class Save extends Component {
 							<h3>Export</h3>
 							<select  className="Save-dropdown" value={this.state.saveType} onChange={(e) => this.getAttributes(e.target.value)}>
 								<option value="collection">Entire Collection</option>
-								<option value="network">Single Subnetwork</option>
+								<option value="network">This Network</option>
 							</select>
 						</div>
 						<div className="Save-visibility">

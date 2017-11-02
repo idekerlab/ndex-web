@@ -8,19 +8,7 @@ import SearchBar from '../components/SearchBar'
 import Header from '../components/Header'
 import Waiting from '../components/Waiting'
 
-function filter(items, term) {
-	if (term !== "") {
-		return items.filter((item) => {
-			for (var key in item) {
-				if (String(item[key]).toLowerCase().includes(term.toLowerCase())) {
-					return true
-				}
-			}
-			return false
-		})
-	}
-	return items
-}
+const RESULT_COUNT = 400
 
 class Choose extends Component {
 
@@ -72,7 +60,7 @@ class Choose extends Component {
     if (address === undefined) {
       address = "http://ndexbio.org"
     }
-    fetch(address + '/v2/search/network?size=200', {
+    fetch(address + '/v2/search/network?size=' + RESULT_COUNT, {
       method: 'POST',
       body: JSON.stringify({ searchString: term }),
       headers: new Headers(headers),
@@ -174,7 +162,6 @@ class Choose extends Component {
     }).then((response) => {
 			return response.json()
     }).then((networks) => {
-      networks = filter(networks, term)
 			this.setState({numNetworks: networks.length})
     	this.populate(networks)
 		})
@@ -199,14 +186,14 @@ class Choose extends Component {
       numNetworks,
       networks,
     } = this.state
-    const headerSuffix = term ? "for " + term : ""
-    const subtitle = numNetworks >= 0 ? ((numNetworks > 200 ? "Showing 200 out of " : "") + numNetworks + " hits") : "Loading results..."
+    const header= searchMode === 'mine' ? "Browsing My Networks" : ('Search Results' + (term === '' ? '' : ' for ' + term))
+    const subtitle = numNetworks >= 0 ? ((numNetworks > RESULT_COUNT ? "Showing " + RESULT_COUNT + " out of " : "") + numNetworks + " hits") : "Loading results..."
 		return (
       <div className="Choose">
         { this.state.loading ? <Waiting text="Loading network from NDEx... Please wait."/> : null}
         <Navbar>
           <SearchBar
-						disabled={searchMode === 'mine'}
+						searchMode={searchMode}
             term={term}
             handleTermChange={this.handleTermChange}
             handleSearch={this.handleSearch}
@@ -230,7 +217,7 @@ class Choose extends Component {
           />
         </Navbar>
         <Header
-          title={"Search results " + headerSuffix}
+          title={header}
           subtitle={subtitle}
         />
         <Browser

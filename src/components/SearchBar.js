@@ -37,7 +37,7 @@ const exampleTerms = [
       ]
 
 
-export const SearchBar = ({term, profileSelected, handleTermChange, handleSearch, disabled}) => {
+export const SearchBar = ({term, profileSelected, handleTermChange, handleSearch, searchMode}) => {
   if (term === undefined)
 		term = ""
 	const handleKeyDown = (e) => {
@@ -69,15 +69,16 @@ export const SearchBar = ({term, profileSelected, handleTermChange, handleSearch
 			</a>
 		</li>;
 	})
+	const mine = searchMode === 'mine'
 	return (
     <div className="Search">
       <input
 				className="SearchBar"
-        disabled={disabled}
+        disabled={mine}
 				type="text"
-        placeholder="Enter search terms here..."
+        placeholder={mine ? "" : "Enter search terms here..."}
         results="0"
-        value={term}
+        value={mine ? '' : term}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
 			/>
