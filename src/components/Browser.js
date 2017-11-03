@@ -10,7 +10,7 @@ class Browser extends Component {
   constructor() {
     super()
     this.state = {
-      view: 'Cards',
+      view: 'Table',
       sort: 'relevance',
 			ascending: 'descending',
 		}
