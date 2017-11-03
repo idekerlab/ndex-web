@@ -16,8 +16,7 @@ class App extends Component {
       profiles: JSON.parse(window.localStorage.getItem('profiles')) || [],
       selectedProfile: JSON.parse(window.localStorage.getItem('selectedProfile')) || {},
     }
-		//handle user profiles with missing userId
-  }
+	}
 
   loadComponentConfig() {
     fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/status')
@@ -72,6 +71,7 @@ class App extends Component {
     window.localStorage.setItem('selectedProfile', '{}')
   }
 
+
 	updateProfile(profile){
 		const main = this
 		if (profile.hasOwnProperty('serverAddress') && profile.hasOwnProperty('userName') && !profile.hasOwnProperty('userId')){
@@ -107,7 +107,7 @@ class App extends Component {
 	}
 
   render() {
-    const components = {
+		const components = {
       error: Error,
       loading: Loading,
       choose: Choose,

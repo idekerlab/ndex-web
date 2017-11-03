@@ -36,30 +36,26 @@ class Choose extends Component {
 		return this.props.selectedProfile.hasOwnProperty('userId')
 	}
 
-  handleSearch = (mode, address) => {
-
+  handleSearch = (mode, profile) => {
+		profile = profile || this.props.selectedProfile
 		mode = (mode === 'all' || mode === 'mine') ? mode : this.state.searchMode
 		this.setState((old) => { return {networks: [], numNetworks: -1, searchMode: mode}})
-		address = address || this.props.selectedProfile.serverAddress
 		if (!this.signedIn() || mode === 'all'){
-			this.handleSearchTerm(this.state.term, address)
+			this.handleSearchTerm(this.state.term, profile)
 			return
 		}else{
-			this.handleGetMyNetworks(this.state.term)
+			this.handleGetMyNetworks(this.state.term, profile)
 		}
 	}
 
-	handleSearchTerm = (term = "", address) => {
-    let profile = this.props.selectedProfile
+	handleSearchTerm = (term = "", profile) => {
+    profile = profile || this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
     if (Object.keys(profile).length !== 0) {
       headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
-		address = address || profile.serverAddress
+		const address = profile.serverAddress || 'http://ndexbio.org'
 
-    if (address === undefined) {
-      address = "http://ndexbio.org"
-    }
     fetch(address + '/v2/search/network?size=' + RESULT_COUNT, {
       method: 'POST',
       body: JSON.stringify({ searchString: term }),
@@ -73,7 +69,7 @@ class Choose extends Component {
       this.populate(networks)
 		}).catch((error) => {
       this.setState({networks : [], numNetworks: 0})
-      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
+      alert("CyNDEx2 was unable to connect to the NDEx server. Check your connection and try again. If the problem persists, contact the NDEx team")
     })
   }
 
@@ -112,7 +108,7 @@ class Choose extends Component {
         this.setState({ loading: false })
 			})
       .catch((error) => {
-				alert("There's something wrong with your connection and we were unable to import the network.\nPlease try again after the issue has been resolved.")
+				alert("An error occurred while trying to import the network. Reopen the browser and try again.")
         this.setState({loading:false})
       })
   }
@@ -147,14 +143,15 @@ class Choose extends Component {
 		this.handleSearch(newMode)
 	}
 
-	handleGetMyNetworks = (term) => {
-		let profile = this.props.selectedProfile
-    let headers = { 'Content-Type': 'application/json'}
-    if (Object.keys(profile).length !== 0) {
-      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
-    }
+	handleGetMyNetworks = (term, profile) => {
+		profile = profile || this.props.selectedProfile
     if (profile.serverAddress === undefined) {
       profile = { serverAddress: "http://ndexbio.org" }
+    }
+
+		let headers = { 'Content-Type': 'application/json'}
+    if (profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
+      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
     fetch(profile.serverAddress + '/v2/user/' + profile.userId + '/networksummary', {
       method: 'GET',
@@ -167,7 +164,7 @@ class Choose extends Component {
 		})
     .catch((error) => {
 			this.setState({networks : [], numNetworks: 0})
-      alert("There's something wrong with your connection and we could not contact NDEx. Please try again after the issue has been resolved.")
+      alert("Unable to retrieve your networks from the NDEx server. Check your connection and try again. ")
       })
 	}
 
@@ -203,16 +200,16 @@ class Choose extends Component {
             selectedProfile={selectedProfile}
             onProfileAdd={(p) => {
 							handleProfileAdd(p)
-							this.handleSearch(this.state.searchMode, p.serverAddress)
+							this.handleSearch(this.state.searchMode, p)
 						}}
             onProfileSelect={(p) => {
 							handleProfileSelect(p)
-							this.handleSearch(this.state.searchMode, p.serverAddress)
+							this.handleSearch(this.state.searchMode, p)
 						}}
             onProfileDelete={handleProfileDelete}
             onProfileLogout={() => {
 							handleProfileLogout()
-							this.handleSearch('all', 'http://ndexbio.org')
+							this.handleSearch('all', {serverAddress: 'http://ndexbio.org'})
 						}}
           />
         </Navbar>
