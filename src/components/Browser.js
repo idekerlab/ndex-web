@@ -12,7 +12,7 @@ class Browser extends Component {
     this.state = {
       view: 'Cards',
       sort: 'relevance',
-			ascending: false,
+			ascending: 'descending',
 		}
     this.handleViewSelect = this.handleViewSelect.bind(this)
     this.handleSortSelect = this.handleSortSelect.bind(this)
@@ -42,21 +42,25 @@ class Browser extends Component {
 					} else {
 						return 1
 					}
-				} else if (a < b) {
+				} else if (a > b) {
 					return -1
 				} else {
 					return 1
 				}
 			})
+			if (ascending === 'ascending')
+				items = items.reverse()
 		}
-    return ascending === true ? items : items.reverse()
+
+    return items
   }
 
 
   render() {
     const views = {Cards: Cards, Table: Table}
     const fields = Object.keys(this.props.networks[0] || {})
-    fields.unshift('relevance')
+		if (this.props.searchMode !== 'mine')
+			fields.unshift('relevance')
 		const View = views[this.state.view]
     const { sort, ascending, view } = this.state
 		let items = this.sort(this.props.networks.slice(), ascending)
@@ -77,7 +81,14 @@ class Browser extends Component {
 
 							profileSelected={this.props.profileSelected}
 							searchMode={this.props.searchMode}
-							handleSearchMode={this.props.handleSearchMode}
+							handleSearchMode={(m) => {
+								let newData = {sort: m === 'mine' ? 'modified' : 'relevance'}
+								if (m === 'mine')
+									newData['ascending'] = 'descending'
+								this.setState(newData)
+								this.props.handleSearchMode(m)
+								}
+							}
 
 						/>
             {items.length ?

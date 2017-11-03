@@ -27,7 +27,7 @@ const Toolbar = ({
          selectedSort={selectedSort}
          onSortSelect={onSortSelect}
        	/>
-       	<select className="Toolbar-order Toolbar-dropdown" onChange={(v) => {toggleAscending(v.target.value === "ascending") }} value={ascending ? "ascending" : "descending"}>
+       	<select disabled={selectedSort === 'relevance'} className="Toolbar-order Toolbar-dropdown" onChange={(v) => {toggleAscending(v.target.value) }} value={ascending}>
 					<option value={"ascending"}>Ascending</option>
 					<option value={"descending"}>Descending</option>
 				</select>

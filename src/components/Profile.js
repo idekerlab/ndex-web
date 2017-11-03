@@ -71,7 +71,7 @@ const ProfileBadge = ({profile, onClick}) => (
     />
     <div className="ProfileBadge-textblock">
       <h5>{profile.userName || 'Anonymous'}</h5>
-      <h6>{profile.serverAddress && profile.serverAddress.substr(7) || 'NDEx Public'}</h6>
+      <h6>{typeof profile.serverAddress === 'string' ? profile.serverAddress.substr(7) : 'NDEx Public'}</h6>
     </div>
   </div>
 )
@@ -85,7 +85,7 @@ const ProfileDropdown = ({ActivePage, isOpen, ...rest}) => (
 )
 
 const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onProfileDelete, onProfileLogout, onPageActivate}) => {
-  const  profileButtons = (profiles.filter((profile) => { return !(profile.userName == selectedProfile.userName && profile.serverAddress == selectedProfile.serverAddress) } ))
+  const  profileButtons = (profiles.filter((profile) => { return !(profile.userName === selectedProfile.userName && profile.serverAddress === selectedProfile.serverAddress) } ))
               .map((profile, index) => ProfileButton(index, profile, onProfileSelect, onProfileDelete))
   const signOut = selectedProfile.serverAddress === undefined ? null : <DropdownAction
 					key="signout"

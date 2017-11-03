@@ -22,7 +22,7 @@ class Save extends Component {
       version: hydrate('version'),
 			reference: hydrate('reference'),
       description: hydrate('description'),
-			saveType: 'network',
+			saveType: hydrate('saveType'),
 			saving: false,
 			public: false,
 			updatable: false,
@@ -305,13 +305,6 @@ class Save extends Component {
               label="Description"
 							required={this.state.public}
             />
-            <div className="Save-visibility">
-							<h3>Export</h3>
-							<select  className="Save-dropdown" value={this.state.saveType} onChange={(e) => this.getAttributes(e.target.value)}>
-								<option value="collection">Entire Collection</option>
-								<option value="network">This Network</option>
-							</select>
-						</div>
 						<div className="Save-visibility">
               <h3>Save as Public?</h3>
               <input
