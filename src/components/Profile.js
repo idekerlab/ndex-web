@@ -159,6 +159,8 @@ class AddProfile extends Component {
 		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
         profile.serverAddress = "http://" + profile.serverAddress
     }
+		if (profile.serverAddress.endsWith('/'))
+			profile.serverAddress = profile.serverAddress.slice(0, -1)
 
     const filtered = this.props.profiles.filter((p) => p.serverAddress === profile.serverAddress && p.userName === profile.userName)
     if (filtered.length !== 0) {

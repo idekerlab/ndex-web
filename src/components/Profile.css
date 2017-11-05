@@ -160,7 +160,7 @@
 
 .SelectProfile-list {
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   margin: 0px;
   padding: 0px;
   list-style: none;

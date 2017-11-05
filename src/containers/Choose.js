@@ -51,7 +51,7 @@ class Choose extends Component {
 	handleSearchTerm = (term = "", profile) => {
     profile = profile || this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
-    if (Object.keys(profile).length !== 0) {
+    if (profile !== undefined && profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
       headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
 		const address = profile.serverAddress || 'http://ndexbio.org'
@@ -134,7 +134,7 @@ class Choose extends Component {
 
 	componentWillReceiveProps(newProps){
 		if (!newProps['selectedProfile']){
-			this.handleSearch('all', 'http://ndexbio.org')
+			this.handleSearch('all', {serverAddress: 'http://ndexbio.org'})
 		}
 	}
 
