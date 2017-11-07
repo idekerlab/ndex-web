@@ -33,7 +33,7 @@ class Choose extends Component {
   }
 
 	signedIn = () => {
-		return this.props.selectedProfile.hasOwnProperty('userId')
+		return typeof this.props.selectedProfile === 'object' && this.props.selectedProfile.hasOwnProperty('userId')
 	}
 
   handleSearch = (mode, profile) => {
@@ -220,7 +220,7 @@ class Choose extends Component {
         <Browser
 					searchMode={searchMode}
 					handleSearchMode={this.handleSearchMode}
-					profileSelected={selectedProfile.hasOwnProperty('userId')}
+					profileSelected={this.signedIn()}
 
 					networks={networks}
           onNetworkDownload={(networkId) => this.handleDownloadNetwork(networkId)}
