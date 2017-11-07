@@ -16,11 +16,16 @@ const Toolbar = ({
         selectedView={selectedView}
         onViewSelect={onViewSelect}
       />
+			<div className='Toolbar-searchMode'>
+				<input
+					id='searchMode'
+					type="checkbox"
+					disabled={!profileSelected}
+					onChange={(v) => {handleSearchMode(v.target.checked ? 'mine' : 'all') }}
+					checked={searchMode === 'mine'}/>
+				<label>My Networks</label>
+			</div>
       <div className="Toolbar-view-dropdowns">
-				<select className="Toolbar-searchMode Toolbar-dropdown" disabled={!profileSelected} value={searchMode} onChange={(v) => {handleSearchMode(v.target.value)}}>
-					<option value="all">All Networks</option>
-					<option value="mine">My Networks</option>
-				</select>
 				<SortSelector
          sorts={sorts}
          sortsFilter={(sort) => sort !== "_id" && sort !== "description"}

@@ -46,6 +46,7 @@
 
 .Toolbar-view-buttons, .Toolbar-view-dropdowns {
 	display: inherit;
+	z-index: 2;
 }
 
 .Toolbar-dropdown {
@@ -54,5 +55,34 @@
   border: 1px solid #DFDFDF;
   border-radius: 8px;
   margin: 3px;
+	background: white;
+	cursor: pointer;
+}
+
+.Toolbar-dropdown:disabled {
+	cursor: initial;
+}
+
+.Toolbar-searchMode label {
+	vertical-align:middle;
+}
+.Toolbar-searchMode input {
+	display:inline-block;
+	vertical-align:middle;
+	height:35px;
+	z-index: 5;
+	cursor: pointer;
+}
+
+.Toolbar-searchMode {
+  font-size: 1rem;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.Toolbar-searchMode input:disabled {
+	color: lightgray;
+	cursor: not-allowed;
 }
 
