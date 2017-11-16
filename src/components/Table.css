@@ -49,6 +49,14 @@
   background-color: lightgrey;
 }
 
+.Table .name {
+	font-size: 1.2em;
+}
+
+.Table .date {
+	min-width: 160px;
+}
+
 .Table-row td {
   padding: 10px;
   text-align: left;

@@ -159,50 +159,57 @@
 	cursor: not-allowed;
 }
 
-.success-modal {
-  position:absolute;
-  top:0;
-  right:0;
-  left:0;
-  bottom:0;
-  z-index:100;
-  background: rgba(0, 0, 0, .5)
-}
-
-#success-modal-message {
-  position: absolute;
-  width:100%;
-  text-align: center;
-  background: #28a745;
-  color:white;
-  padding:20px;
-  top:30%;
-  cursor:pointer;
-}
-
-#success-modal-message:hover {
-  background: #269f42;
-}
-
-#success-modal-close {
-  width: 100%;
-  position: absolute;
-  bottom: 30%;
-  text-align: center;
-  padding: 20px;
-  color: white;
-  background: #E74C3C;
-  cursor: pointer;
-}
-
-#success-modal-close:hover {
-  background: #B03A2E;
-}
-
 .Save-dropdown {
   height: 35px;
   font-size: 1rem;
   border: 1px solid #DFDFDF;
   border-radius: 8px;
   margin: 3px;
+}
+.SaveModal {
+	padding: 15px;
+	font-size: 1.2rem;
+}
+
+.SaveModal * {
+	padding: 6px;
+}
+
+.SaveModal h2 {
+	padding-bottom: 0;
+}
+
+.SaveModal input.form-control {
+	width: 100%;
+}
+
+.SaveModal .btn:hover {
+	border-color: rgba(0, 0, 0, .40);
+}
+
+.SaveModal .btn:active {
+	background: #cacccd;
+}
+
+.SaveModal .btn {
+	cursor: pointer;
+  background-color: #eceeef;
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.25;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,.15);
+  padding: .5rem 1rem;
+  border-radius: .25rem;
+  transition: all .2s ease-in-out;
+}
+
+/* NDEx Share URL */
+.SaveModal h4, .SaveModal h5 {
+	margin-top: 0;
+	margin-bottom: 0;
+	text-align:left;
 }

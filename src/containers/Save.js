@@ -4,7 +4,7 @@ import copy from 'copy-to-clipboard'
 import Navbar from '../components/Navbar'
 import Profile from '../components/Profile'
 import Waiting from '../components/Waiting'
-
+import ModalDialog from '../components/ModalDialog'
 
 class Save extends Component {
 
@@ -28,7 +28,9 @@ class Save extends Component {
 			updatable: false,
 			overwrite: false,
       success: false,
+			shareURL: null,
     }
+		window.saver = this
 		this.networkData = {}
   }
 
@@ -149,15 +151,46 @@ class Save extends Component {
         }
       })
 
-			/*.catch((error) => {
-				alert(error)
-        alert("There's something wrong with your connection and we could not save your network to NDEx.")
-        this.setState({saving: false})
-      })*/
   }
 
+	toggleShareUrl = () => {
+		let url = "http://www.ndexbio.org/#/network/" + this.state.uuid
+		const able = this.state.shareURL === null ? 'enable' : 'disable'
+		if (!this.state.isPublic){
+			fetch("http://www.ndexbio.org/v2/network/" + this.state.uuid + "/accesskey?action=" + able, {
+				method: 'PUT',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Basic ' + btoa(this.props.selectedProfile.userName + ":" + this.props.selectedProfile.password)
+				},
+			})
+			.then(resp => {
+				if (!resp.ok){
+					alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
+				}
+				return resp.json()})
+			.then(json => {
+				if (able === 'enable' && json.accessKey){
+					url += "?accesskey=" + json.accessKey
+					this.setState({shareURL: url})
+				}else{
+					this.setState({shareURL: null})
+				}
+			})
+			.catch((e) => {
+				alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
+			})
+		}else{
+			this.setState({shareURL: url})
+		}
+	}
+
   saveImage(networkId, uuid) {
-    fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
+    const newState = {saving: false, uuid: uuid, success: true}
+		if (this.state.isPublic)
+			newState['shareURL'] = "http://www.ndexbio.org/#/network/" + uuid
+		fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
     .then((blob) => {
       fetch('http://v1.image-uploader.cytoscape.io/' + uuid, {
@@ -171,14 +204,14 @@ class Save extends Component {
           if (!resp.ok){
             throw new Error(resp.statusText)
           }
-          this.setState({saving: false, 'uuid':uuid, 'success': true})
+					this.setState(newState)
       }).catch((error) => {
-        alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
-        this.setState({saving: false, 'uuid':uuid, 'success': true})
+        alert("Your network was saved, but CyNDEx2 was unable to upload a network image.")
+        this.setState(newState)
       });
     }).catch((error) => {
       alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
-      this.setState({saving: false, 'uuid':uuid, 'success': true})
+      this.setState(newState)
     })
   }
 
@@ -236,19 +269,41 @@ class Save extends Component {
 
 		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') || (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
 
+		const sharable = this.state.isPublic || this.state.shareURL !== null
+
 		return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
-        {this.state.success &&
-          <div className="success-modal">
-            <p id="success-modal-message" onClick={() => {
-              copy(this.state.uuid);
-              alert("UUID Copied")
-              this.closeWindow()}
-            }>Network saved with UUID {this.state.uuid}. Click to copy.</p>
-            <p id="success-modal-close" onClick={() => this.closeWindow()}>Click to close this window.</p>
-          </div>
-        }
+				<ModalDialog
+					show={true}
+					containerStyle={{width: '50%', minWidth: '400px'}}
+					closeOnOuterClick={true}
+					onClose={() => (this.closeWindow())}>
+					<div className="SaveModal col-sm-12">
+						<h2>Network successfully saved to NDEx!</h2>
+						<h5 style={{textAlign: 'center'}}>UUID: {this.state.uuid}</h5>
+						<h4><strong>Share With Others</strong></h4>
+						<h5>Anyone with the link can view this network</h5>
+						<div>
+							<input type="text" className="form-control" onChange={() => {}} value={sharable && this.state.shareURL ? this.state.shareURL : "Not Enabled"}/>
+						</div>
+						<h5 className="ng-scope">
+							<strong>Share URL Status:</strong>
+							{sharable ?
+							<span style={{color:"green"}}>Enabled</span>
+							:
+							<span style={{color:"red"}}>Disabled</span>
+							}
+						</h5>
+						{!this.state.isPublic && <button type="button" className="btn btn-default ng-binding" onClick={() => this.toggleShareUrl()}>
+							{(sharable ? "Disable" : "Enable") + " Share URL"}
+						</button>}
+						{sharable &&
+						<button id="copyButtonId" type="button" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
+							Copy URL
+						</button>}
+					</div>
+				</ModalDialog>
         <Navbar>
           <Profile
             profiles={profiles}
@@ -327,7 +382,7 @@ class Save extends Component {
 
           </div>
         </div>
-        <div className="Save-actionbar">
+			<div className="Save-actionbar">
           <h5 className="Save-actionbar-label">
 			{this.state.saveType.charAt(0).toUpperCase() + this.state.saveType.slice(1)} Name:
           </h5>
