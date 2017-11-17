@@ -99,7 +99,7 @@ class Choose extends Component {
     })
       .then((resp) => {
 				if (!resp.ok){
-          throw new Error(resp.statusText)
+          throw new Error(resp.text())
         }
         return resp
       })
@@ -108,6 +108,7 @@ class Choose extends Component {
         this.setState({ loading: false })
 			})
       .catch((error) => {
+				console.log(error)
 				alert("An error occurred while trying to import the network. Reopen the browser and try again.")
         this.setState({loading:false})
       })
