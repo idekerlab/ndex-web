@@ -177,6 +177,7 @@
 
 .SaveModal h2 {
 	padding-bottom: 0;
+	line-height:normal;
 }
 
 .SaveModal input.form-control {

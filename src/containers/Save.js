@@ -169,16 +169,17 @@ class Save extends Component {
 				if (!resp.ok){
 					alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
 				}
-				return resp.json()})
+				return able === 'disable' ? null : resp.json()})
 			.then(json => {
-				if (able === 'enable' && json.accessKey){
+				if (!json){
+					this.setState({shareURL: null})
+				}else if (json.accessKey){
 					url += "?accesskey=" + json.accessKey
 					this.setState({shareURL: url})
-				}else{
-					this.setState({shareURL: null})
 				}
 			})
 			.catch((e) => {
+				console.log(e)
 				alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
 			})
 		}else{
@@ -275,7 +276,7 @@ class Save extends Component {
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
 				<ModalDialog
-					show={true}
+					show={this.state.success}
 					containerStyle={{width: '50%', minWidth: '400px'}}
 					closeOnOuterClick={true}
 					onClose={() => (this.closeWindow())}>
@@ -295,13 +296,16 @@ class Save extends Component {
 							<span style={{color:"red"}}>Disabled</span>
 							}
 						</h5>
-						{!this.state.isPublic && <button type="button" className="btn btn-default ng-binding" onClick={() => this.toggleShareUrl()}>
+						{!this.state.isPublic && <button className="btn btn-default ng-binding" onClick={() => this.toggleShareUrl()}>
 							{(sharable ? "Disable" : "Enable") + " Share URL"}
 						</button>}
 						{sharable &&
-						<button id="copyButtonId" type="button" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
+						<button id="copyButtonId" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
 							Copy URL
 						</button>}
+						<button id="Save-back" className="btn btn-default" onClick={() => {
+							this.setState({success: false, shareURL: null, saving: false})
+						}}>Go Back</button>
 					</div>
 				</ModalDialog>
         <Navbar>
