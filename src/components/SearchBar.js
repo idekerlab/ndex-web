@@ -13,6 +13,10 @@ const exampleTerms = [
           text: 'RBL2',
           description: 'Any mention of RBL2'
         },
+				{
+					text: 'http://www.ndexbio.org/#/network/2e67e8f0-3a6c-11e7-8f50-0ac135e8bacf',
+					description: 'NDEx share URL'
+				},
         {
           text: 'uuid:2e67e8f0-3a6c-11e7-8f50-0ac135e8bacf',
           description: 'Network by UUID'
