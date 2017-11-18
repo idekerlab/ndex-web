@@ -48,7 +48,51 @@ class Choose extends Component {
 		}
 	}
 
+	getNetworkFromShareURL = (url) => {
+		const main = this
+		var myRegexp = /^(https?:\/\/www\.[^#]*ndexbio.org\/)#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
+		var match = myRegexp.exec(url);
+		if (match === null)
+			return null
+		const server = match[1]
+		const uuid = match[2]
+		const accessKey = match[4]
+		if (server !== undefined && uuid !== undefined){
+			let summaryUrl = server + 'v2/network/' + uuid + '/summary';
+			if (accessKey){
+				summaryUrl += '?accesskey=' + accessKey
+			}
+			fetch(summaryUrl, {
+				method: 'GET',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+			})
+			.then(function(resp){
+				if (resp.ok){
+					return resp.json()
+				}else{
+					throw new Error("Unable to get network from shared URL. Is it copied correctly?")
+				}
+			})
+			.then(json => {
+				this.setState({numNetworks: 1})
+				main.populate([json])
+			})
+			.catch(e => {
+				this.setState({numNetworks: 0})
+				alert(e)
+			})
+			return true
+		}
+		return undefined
+	}
+
 	handleSearchTerm = (term = "", profile) => {
+		if (this.getNetworkFromShareURL(term)){
+			return
+		}
     profile = profile || this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
     if (profile !== undefined && profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
