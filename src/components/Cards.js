@@ -9,7 +9,8 @@ const Cards = ({items, onNetworkDownload}) => (
     {items.map((item) => (
       <Card
         key={item._id}
-        id={item._id}
+        accessKey={item.accessKey}
+				id={item._id}
         name={item.name}
         description={item.description}
         owner={item.owner}
@@ -29,7 +30,7 @@ function copyFunc(uuid) {
   alert("Copied UUID " + uuid + " to clipboard")
 }
 
-const Card = ({id, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
+const Card = ({id, accessKey, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
     <div key={id} className="Card-item">
     <div className="Card">
       <div className="Card-header">
@@ -44,7 +45,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
 
         <div className="Card-header-group">
           <p>{visibility}</p>
-          <img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} title="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>
+	{/*<img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} title="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>*/}
         </div>
       </div>
       <img className="Card-image" src={getImage(id)} onError={(err) => {
@@ -72,7 +73,7 @@ const Card = ({id, name, description, owner, visibility, updated, nodes, edges, 
           {description}
         </p> : null }
         <button className="Card-content-download" onClick={() => {
-						onNetworkDownload(id)
+						onNetworkDownload(id, accessKey)
 					}
 				}>Import</button>
       </div>

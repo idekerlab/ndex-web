@@ -135,7 +135,7 @@ class AddProfile extends Component {
   constructor() {
     super()
     this.state = {
-      failed: false,
+      failMessage: "",
       serverAddress: "",
       userName: "",
       password: "",
@@ -152,38 +152,49 @@ class AddProfile extends Component {
   }
 
   verifyLogin() {
+		this.setState({failMessage: ''})
+
     const profile = Object.assign({}, this.state)
     const { onPageActivate, onProfileAdd } = this.props
 		if (profile.serverAddress === '')
 			profile.serverAddress = 'http://ndexbio.org'
-		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
-        profile.serverAddress = "http://" + profile.serverAddress
-    }
 		if (profile.serverAddress.endsWith('/'))
 			profile.serverAddress = profile.serverAddress.slice(0, -1)
 
+		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
+        profile.serverAddress = "http://" + profile.serverAddress
+    }
+
+
+		if (profile.userName === "" || profile.password === "") {
+			const missingVal = profile.userName === "" ? "username" : "password"
+      this.setState({failMessage: "Must provide a " + missingVal})
+    	return;
+		}
     const filtered = this.props.profiles.filter((p) => p.serverAddress === profile.serverAddress && p.userName === profile.userName)
+
     if (filtered.length !== 0) {
-      this.setState({failed: true})
-    } else if (profile.serverAddress === "" || profile.userName === "" || profile.password === "") {
-      this.setState({failed: true})
+      this.setState({failMessage: "The profile is already logged in."})
     } else {
       fetch(profile.serverAddress + "/v2/user?valid=true", {
         headers: new Headers({
           "Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
         })
-      }).then((response) => {
-				if (!response.ok) {
-          this.setState({failed: true})
-        	throw Error()
+      }).then((response) => response.json() )
+			.then((response) => {
+				if (response.errorCode){
+					throw Error(response.message)
 				}
-				return response.json()
+				return response
     	}).then((blob) => {
         onPageActivate('select')
 				const newProfile = Object.assign(profile, {userId: blob.externalId, firstName: blob.firstName, image: blob.image})
 				onProfileAdd(newProfile)
 			}).catch((error) => {
-        this.setState({failed: true})
+				var message = error.message
+				if (error.message === "Failed to fetch")
+					message = "Could not connect to NDEx server " + profile.serverAddress
+        this.setState({failMessage: message})
       })
     }
   }
@@ -215,7 +226,7 @@ class AddProfile extends Component {
 									document.getElementById("addAccount").click()
 							}}
 						/>
-            {!this.state.failed || <p className="AddProfile-fail">Credentials invalid or Profile exists! Try again.</p>}
+            {this.state.failMessage && <p className="AddProfile-fail">{this.state.failMessage}</p>}
           </div>
         }
         actions={[

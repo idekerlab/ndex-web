@@ -48,7 +48,54 @@ class Choose extends Component {
 		}
 	}
 
+	getNetworkFromShareURL = (url) => {
+		const main = this
+		var myRegexp = /^(https?:\/\/[^#]*)#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
+		var match = myRegexp.exec(url);
+		if (match === null){
+			this.setState({numNetworks: 0})
+			return null
+		}
+		const server = match[1]
+		const uuid = match[2]
+		const accessKey = match[4]
+		if (server !== undefined && uuid !== undefined){
+			let summaryUrl = server + 'v2/network/' + uuid + '/summary';
+			if (accessKey){
+				summaryUrl += '?accesskey=' + accessKey
+			}
+			fetch(summaryUrl, {
+				method: 'GET',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+			})
+			.then(function(resp){
+				if (resp.ok){
+					return resp.json()
+				}else{
+					throw new Error("Unable to get network from shared URL. Is it copied correctly?")
+				}
+			})
+			.then(json => {
+				this.setState({numNetworks: 1})
+				json['accessKey'] = accessKey
+				main.populate([json])
+			})
+			.catch(e => {
+				this.setState({numNetworks: 0})
+				alert("Unable to access network by NDEx shared URL. Was it copied correctly?")
+			})
+			return true
+		}
+		return undefined
+	}
+
 	handleSearchTerm = (term = "", profile) => {
+		if (this.getNetworkFromShareURL(term)){
+			return
+		}
     profile = profile || this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
     if (profile !== undefined && profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
@@ -73,8 +120,9 @@ class Choose extends Component {
     })
   }
 
-  handleDownloadNetwork(networkId) {
-    this.setState({ loading: true })
+  handleDownloadNetwork = (networkId, accessKey) => {
+
+		this.setState({ loading: true })
     let {
       serverAddress,
       userName,
@@ -83,23 +131,27 @@ class Choose extends Component {
     if (serverAddress === undefined) {
       serverAddress = "http://ndexbio.org"
     }
-    const payload = JSON.stringify({
+    const payload = {
       username: userName,
       password: password,
       serverUrl: serverAddress + '/v2',
       uuid: networkId
-    })
+    }
+		if (accessKey){
+			payload['accessKey'] = accessKey
+		}
     fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
 				'Content-Type': 'application/json'
       },
-      body: payload
+      body: JSON.stringify(payload)
     })
       .then((resp) => {
 				if (!resp.ok){
-          throw new Error(resp.statusText)
+					const text = resp.text()
+					throw new Error(text)
         }
         return resp
       })
@@ -119,6 +171,7 @@ class Choose extends Component {
 		} else {
 			networks = networks.map((network) => ({
 					_id: network.externalId,
+					accessKey: network.accessKey,
 					name: network.name,
 					description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
 					owner: network.owner,
@@ -223,7 +276,7 @@ class Choose extends Component {
 					profileSelected={this.signedIn()}
 
 					networks={networks}
-          onNetworkDownload={(networkId) => this.handleDownloadNetwork(networkId)}
+          onNetworkDownload={this.handleDownloadNetwork}
 				/>
       </div>
     )
