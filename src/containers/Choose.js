@@ -50,10 +50,12 @@ class Choose extends Component {
 
 	getNetworkFromShareURL = (url) => {
 		const main = this
-		var myRegexp = /^(https?:\/\/www\.[^#]*ndexbio.org\/)#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
+		var myRegexp = /^(https?:\/\/[^#]*)#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
 		var match = myRegexp.exec(url);
-		if (match === null)
+		if (match === null){
+			this.setState({numNetworks: 0})
 			return null
+		}
 		const server = match[1]
 		const uuid = match[2]
 		const accessKey = match[4]
@@ -78,11 +80,12 @@ class Choose extends Component {
 			})
 			.then(json => {
 				this.setState({numNetworks: 1})
+				json['accessKey'] = accessKey
 				main.populate([json])
 			})
 			.catch(e => {
 				this.setState({numNetworks: 0})
-				alert(e)
+				alert("Unable to access network by NDEx shared URL. Was it copied correctly?")
 			})
 			return true
 		}
@@ -117,8 +120,9 @@ class Choose extends Component {
     })
   }
 
-  handleDownloadNetwork(networkId) {
-    this.setState({ loading: true })
+  handleDownloadNetwork = (networkId, accessKey) => {
+
+		this.setState({ loading: true })
     let {
       serverAddress,
       userName,
@@ -127,23 +131,27 @@ class Choose extends Component {
     if (serverAddress === undefined) {
       serverAddress = "http://ndexbio.org"
     }
-    const payload = JSON.stringify({
+    const payload = {
       username: userName,
       password: password,
       serverUrl: serverAddress + '/v2',
       uuid: networkId
-    })
+    }
+		if (accessKey){
+			payload['accessKey'] = accessKey
+		}
     fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
 				'Content-Type': 'application/json'
       },
-      body: payload
+      body: JSON.stringify(payload)
     })
       .then((resp) => {
 				if (!resp.ok){
-          throw new Error(resp.text())
+					const text = resp.text()
+					throw new Error(text)
         }
         return resp
       })
@@ -152,7 +160,6 @@ class Choose extends Component {
         this.setState({ loading: false })
 			})
       .catch((error) => {
-				console.log(error)
 				alert("An error occurred while trying to import the network. Reopen the browser and try again.")
         this.setState({loading:false})
       })
@@ -164,6 +171,7 @@ class Choose extends Component {
 		} else {
 			networks = networks.map((network) => ({
 					_id: network.externalId,
+					accessKey: network.accessKey,
 					name: network.name,
 					description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
 					owner: network.owner,
@@ -268,7 +276,7 @@ class Choose extends Component {
 					profileSelected={this.signedIn()}
 
 					networks={networks}
-          onNetworkDownload={(networkId) => this.handleDownloadNetwork(networkId)}
+          onNetworkDownload={this.handleDownloadNetwork}
 				/>
       </div>
     )

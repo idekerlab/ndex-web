@@ -2,7 +2,7 @@ import React from 'react'
 import './Table.css'
 
 const Table = ({items, onNetworkDownload}) => {
-  const filter = (key) => key !== "_id" && key !== "description"
+  const filter = (key) => key !== "_id" && key !== "description" && key !== 'accessKey'
   const keys = Object.keys(items[0]).filter(filter)
   return (
     <table className="Table">
@@ -15,10 +15,13 @@ const Table = ({items, onNetworkDownload}) => {
       </thead>
       <tbody className="Table-body">
         {
-          items.map((item, index) => (
-
+          items.map((item, index) => {
+						const accessKey = item.accessKey
+						return (
             <tr key={index} className="Table-row">
-                <td className="Table-checkbox"><button className="Table-download" onClick={() => onNetworkDownload(item._id)}>Import</button></td>
+                <td className="Table-checkbox"><button className="Table-download" onClick={() => {
+									onNetworkDownload(item._id, accessKey)
+								}}>Import</button></td>
 
               {keys.map((key, index) => {
 								if (key === "modified" || key === "created" ){
@@ -30,7 +33,7 @@ const Table = ({items, onNetworkDownload}) => {
 							})
             }
             </tr>
-          ))
+          )})
         }
       </tbody>
     </table>
