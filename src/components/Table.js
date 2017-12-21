@@ -1,5 +1,7 @@
 import React from 'react'
 import './Table.css'
+import Moment from 'moment';
+
 
 const Table = ({items, onNetworkDownload}) => {
   const filter = (key) => key !== "_id" && key !== "description" && key !== 'accessKey' && key !== 'server';
@@ -22,7 +24,7 @@ const Table = ({items, onNetworkDownload}) => {
                   <tr key={index} className="Table-row">
                       <td className="Table-checkbox">
                           <button className="Table-download" onClick={() => {
-                              onNetworkDownload(item._id, accessKey,serverURL)
+                              onNetworkDownload(item._id, accessKey, serverURL)
                           }}>Import
                           </button>
                       </td>
@@ -30,7 +32,7 @@ const Table = ({items, onNetworkDownload}) => {
                       {keys.map((key, index) => {
                           if (key === "modified" || key === "created") {
                               return <td key={index} className='date'
-                                         title={new Date(item[key]).toString()}>{new Date(item[key]).toLocaleString()}</td>
+                                         title={new Date(item[key]).toString()}>{Moment(item[key]).format("MM/DD/YY hh:mm a")}</td>
                           } else if (key === "name") {
                               return <td key={index} className='name' title={item['description']}>{item[key]}</td>
                           }

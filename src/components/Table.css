@@ -54,12 +54,14 @@
 }
 
 .Table .date {
-	min-width: 160px;
+	min-width: 115px;
 }
 
 .Table-row td {
   padding: 10px;
   text-align: left;
+ /* max-width: 300px; */
+
 }
 /*
 @media (max-width: 1250px) {
