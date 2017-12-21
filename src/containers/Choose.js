@@ -50,7 +50,7 @@ class Choose extends Component {
 
 	getNetworkFromShareURL = (url) => {
 		const main = this
-		var myRegexp = /^(https?:\/\/[^#]*)#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
+		var myRegexp = /^(https?:\/\/[^#]*)\/#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
 		var match = myRegexp.exec(url);
 		if (match === null){
 			this.setState({numNetworks: 0})
@@ -60,7 +60,7 @@ class Choose extends Component {
 		const uuid = match[2]
 		const accessKey = match[4]
 		if (server !== undefined && uuid !== undefined){
-			let summaryUrl = server + 'v2/network/' + uuid + '/summary';
+			let summaryUrl = server + '/v2/network/' + uuid + '/summary';
 			if (accessKey){
 				summaryUrl += '?accesskey=' + accessKey
 			}
@@ -81,6 +81,7 @@ class Choose extends Component {
 			.then(json => {
 				this.setState({numNetworks: 1})
 				json['accessKey'] = accessKey
+				json['server'] = server
 				main.populate([json])
 			})
 			.catch(e => {
@@ -120,70 +121,75 @@ class Choose extends Component {
     })
   }
 
-  handleDownloadNetwork = (networkId, accessKey) => {
+    handleDownloadNetwork = (networkId, accessKey, server) => {
 
-		this.setState({ loading: true })
-    let {
-      serverAddress,
-      userName,
-      password,
-    } = this.props.selectedProfile
-    if (serverAddress === undefined) {
-      serverAddress = "http://ndexbio.org"
-    }
-    const payload = {
-      username: userName,
-      password: password,
-      serverUrl: serverAddress + '/v2',
-      uuid: networkId
-    }
-		if (accessKey){
-			payload['accessKey'] = accessKey
-		}
-    fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-				'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    })
-      .then((resp) => {
-				if (!resp.ok){
-					const text = resp.text()
-					throw new Error(text)
+        this.setState({loading: true});
+        let serverAddress = server === undefined?
+			   this.props.selectedProfile.serverAddress : server ;
+
+		let {
+			userName,
+			password,
+		} = this.props.selectedProfile;
+
+
+        if (serverAddress === undefined) {
+            serverAddress = "http://ndexbio.org"
         }
-        return resp
-      })
-      .then((blob) => blob.json())
-      .then((resp) => {
-        this.setState({ loading: false })
-			})
-      .catch((error) => {
-				alert("An error occurred while trying to import the network. Reopen the browser and try again.")
-        this.setState({loading:false})
-      })
-  }
+        const payload = {
+            username: userName,
+            password: password,
+            serverUrl: serverAddress + '/v2',
+            uuid: networkId
+        }
+        if (accessKey) {
+            payload['accessKey'] = accessKey
+        }
+        fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+            .then((resp) => {
+                if (!resp.ok) {
+                    const text = resp.text()
+                    throw new Error(text)
+                }
+                return resp
+            })
+            .then((blob) => blob.json())
+            .then((resp) => {
+                this.setState({loading: false})
+            })
+            .catch((error) => {
+                alert("An error occurred while trying to import the network. Reopen the browser and try again.")
+                this.setState({loading: false})
+            })
+    }
 
-	populate = (networks) => {
-		if (networks === undefined) {
-			networks = []
-		} else {
-			networks = networks.map((network) => ({
-					_id: network.externalId,
-					accessKey: network.accessKey,
-					name: network.name,
-					description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
-					owner: network.owner,
-					visibility: network.visibility,
-					nodes: network.nodeCount,
-					edges: network.edgeCount,
-					created: network.creationTime,
-					modified: network.modificationTime,
-			}))
-		}
-		this.setState({ networks })
-	}
+    populate = (networks) => {
+        if (networks === undefined) {
+            networks = []
+        } else {
+            networks = networks.map((network) => ({
+                _id: network.externalId,
+                accessKey: network.accessKey,
+                server: network.server,
+                name: network.name,
+                description: (network.description || '').replace(/<(?:.|\n)*?>/gm, ''),
+                owner: network.owner,
+                visibility: network.visibility,
+                nodes: network.nodeCount,
+                edges: network.edgeCount,
+                created: network.creationTime,
+                modified: network.modificationTime,
+            }))
+        }
+        this.setState({networks})
+    }
 
 	componentWillReceiveProps(newProps){
 		if (!newProps['selectedProfile']){

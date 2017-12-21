@@ -106,32 +106,32 @@ class App extends Component {
     this.loadComponentConfig()
 	}
 
-  render() {
-		const components = {
-      error: Error,
-      loading: Loading,
-      choose: Choose,
-      save: Save,
-      cyrestError: CyRESTError
+    render() {
+        const components = {
+            error: Error,
+            loading: Loading,
+            choose: Choose,
+            save: Save,
+            cyrestError: CyRESTError
+        }
+        const profileActions = {
+            handleProfileSelect: this.handleProfileSelect,
+            handleProfileAdd: this.handleProfileAdd,
+            handleProfileDelete: this.handleProfileDelete,
+            handleProfileLogout: this.handleProfileLogout
+        }
+        const Component = components[this.state.component]
+        return (
+            <div className="App">
+                <Component
+                    profiles={this.state.profiles}
+                    selectedProfile={this.state.selectedProfile}
+                    {...this.state.parameters}
+                    {...profileActions}
+                />
+            </div>
+        )
     }
-    const profileActions = {
-      handleProfileSelect: this.handleProfileSelect,
-      handleProfileAdd: this.handleProfileAdd,
-      handleProfileDelete:this.handleProfileDelete,
-      handleProfileLogout: this.handleProfileLogout
-		}
-    const Component = components[this.state.component]
-    return (
-      <div className="App">
-        <Component
-          profiles={this.state.profiles}
-          selectedProfile={this.state.selectedProfile}
-          {...this.state.parameters}
-          {...profileActions}
-        />
-      </div>
-    )
-  }
 
 }
 
