@@ -28,7 +28,7 @@ const Toolbar = ({
       <div className="Toolbar-view-dropdowns">
 				<SortSelector
          sorts={sorts}
-         sortsFilter={(sort) => sort !== "_id" && sort !== "description"}
+         sortsFilter={(sort) => sort !== "_id" && sort !== "description" && sort != "accessKey" && sort != "server"}
          selectedSort={selectedSort}
          onSortSelect={onSortSelect}
        	/>
