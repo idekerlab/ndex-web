@@ -4,10 +4,11 @@
   "private": true,
   "dependencies": {
     "copy-to-clipboard": "^3.0.6",
-    "js-base64": "^2.1.9",
+    "js-base64": "^2.4.0",
     "moment": "^2.20.1",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react": "^16.2.0",
+    "react-confirm-alert": "^1.0.8",
+    "react-dom": "^16.2.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"

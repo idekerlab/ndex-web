@@ -1,6 +1,8 @@
 import React from 'react'
 import './Table.css'
-import Moment from 'moment';
+import Moment from 'moment'
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 
 const Table = ({items, onNetworkDownload}) => {
@@ -24,7 +26,25 @@ const Table = ({items, onNetworkDownload}) => {
                   <tr key={index} className="Table-row">
                       <td className="Table-checkbox">
                           <button className="Table-download" onClick={() => {
-                              onNetworkDownload(item._id, accessKey, serverURL)
+                              if ( item.edges < 200000)
+                                onNetworkDownload(item._id, accessKey, serverURL);
+                              else {
+                               /*   if (window.confirm('This is a very large network, downloading it might cause your running Cytoscape application to crash. Are you sure you want to do this?')) {
+                                      onNetworkDownload(item._id, accessKey, serverURL)
+                                  } else {
+                                      // Do nothing!
+                                  } */
+
+                                  confirmAlert( {
+                                      title: "Warning",
+                                      message:
+                                      "This is a very large network, importing it might cause your running Cytoscape application to crash. Are you sure you want import it?",
+                                      confirmLabel: 'Take the Risk',
+                                      cancelLabel: 'Cancel',
+                                      onConfirm: () => onNetworkDownload(item._id, accessKey, serverURL)
+                                  })
+                              }
+
                           }}>Import
                           </button>
                       </td>
@@ -32,7 +52,7 @@ const Table = ({items, onNetworkDownload}) => {
                       {keys.map((key, index) => {
                           if (key === "modified" || key === "created") {
                               return <td key={index} className='date'
-                                         title={new Date(item[key]).toString()}>{Moment(item[key]).format("MM/DD/YY hh:mm a")}</td>
+                                         title={new Date(item[key]).toString()}>{Moment(item[key]).format("MM/DD/YY hh:mm A")}</td>
                           } else if (key === "name") {
                               return <td key={index} className='name' title={item['description']}>{item[key]}</td>
                           }
