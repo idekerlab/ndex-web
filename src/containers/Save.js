@@ -207,11 +207,11 @@ class Save extends Component {
           }
 					this.setState(newState)
       }).catch((error) => {
-        alert("Your network was saved, but CyNDEx2 was unable to upload a network image.")
+//        alert("Your network was saved, but CyNDEx2 was unable to upload a network image.")
         this.setState(newState)
       });
     }).catch((error) => {
-      alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
+//      alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
       this.setState(newState)
     })
   }

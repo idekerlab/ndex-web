@@ -2,7 +2,7 @@ import React from 'react';
 import './Cards.css'
 
 import profileBadge from '../default-profile.png'
-import copy from 'copy-to-clipboard'
+//import copy from 'copy-to-clipboard'
 
 const Cards = ({items, onNetworkDownload}) => (
   <div className="Cards">
@@ -23,12 +23,12 @@ const Cards = ({items, onNetworkDownload}) => (
     ))}
   </div>
 )
-
+/*
 function copyFunc(uuid) {
   //let url = "http://ndexbio.org/#/newNetwork/" + uuid
   copy(uuid)
   alert("Copied UUID " + uuid + " to clipboard")
-}
+}*/
 
 const Card = ({id, accessKey, name, description, owner, visibility, updated, nodes, edges, onNetworkDownload}) => (
     <div key={id} className="Card-item">

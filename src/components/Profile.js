@@ -104,7 +104,7 @@ const SelectProfile = ({profile, profiles, selectedProfile, onProfileSelect, onP
         <DropdownAction
           key="add"
 					buttonId="addAccount"
-					label="Add Acount"
+					label="Add Account"
           onClick={() => onPageActivate('add')}
         />,
       	signOut

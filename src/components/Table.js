@@ -1,7 +1,6 @@
 import React from 'react'
 import './Table.css'
 import Moment from 'moment'
-import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css' // Import css
 
 
@@ -29,20 +28,20 @@ const Table = ({items, onNetworkDownload}) => {
                               if ( item.edges < 200000)
                                 onNetworkDownload(item._id, accessKey, serverURL);
                               else {
-                               /*   if (window.confirm('This is a very large network, downloading it might cause your running Cytoscape application to crash. Are you sure you want to do this?')) {
+                                  if (window.confirm('This is a very large network, importing it might cause your running Cytoscape application to crash. Are you sure you want import it?')) {
                                       onNetworkDownload(item._id, accessKey, serverURL)
                                   } else {
                                       // Do nothing!
-                                  } */
+                                  }
 
-                                  confirmAlert( {
+                                 /* confirmAlert( {
                                       title: "Warning",
                                       message:
                                       "This is a very large network, importing it might cause your running Cytoscape application to crash. Are you sure you want import it?",
                                       confirmLabel: 'Take the Risk',
                                       cancelLabel: 'Cancel',
                                       onConfirm: () => onNetworkDownload(item._id, accessKey, serverURL)
-                                  })
+                                  }) */
                               }
 
                           }}>Import
