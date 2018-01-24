@@ -151,53 +151,62 @@ class AddProfile extends Component {
     };
   }
 
-  verifyLogin() {
-		this.setState({failMessage: ''})
+    verifyLogin() {
+        this.setState({failMessage: ''})
 
-    const profile = Object.assign({}, this.state)
-    const { onPageActivate, onProfileAdd } = this.props
-		if (profile.serverAddress === '')
-			profile.serverAddress = 'http://ndexbio.org'
-		if (profile.serverAddress.endsWith('/'))
-			profile.serverAddress = profile.serverAddress.slice(0, -1)
+        const profile = Object.assign({}, this.state)
+        const {onPageActivate, onProfileAdd} = this.props
+        if (profile.serverAddress === '')
+            profile.serverAddress = 'http://ndexbio.org'
+        if (profile.serverAddress.endsWith('/'))
+            profile.serverAddress = profile.serverAddress.slice(0, -1)
 
-		if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
-        profile.serverAddress = "http://" + profile.serverAddress
+        if (profile.serverAddress.lastIndexOf("http://", 0) !== 0) {
+            profile.serverAddress = "http://" + profile.serverAddress
+        }
+
+
+        if ((profile.userName === "" && profile.password !== "" )||
+            (profile.userName !== "" && profile.password === "") ) {
+            const missingVal = profile.userName === "" ? "username" : "password"
+            this.setState({failMessage: "Must provide a " + missingVal})
+            return;
+        }
+        const filtered = this.props.profiles.filter((p) => p.serverAddress === profile.serverAddress && p.userName === profile.userName)
+
+        if (filtered.length !== 0) {
+            this.setState({failMessage: "The profile is already logged in."})
+        } else if (profile.userName !== "") {
+            fetch(profile.serverAddress + "/v2/user?valid=true", {
+                headers: new Headers({
+                    "Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
+                })
+            }).then((response) => response.json())
+                .then((response) => {
+                    if (response.errorCode) {
+                        throw Error(response.message)
+                    }
+                    return response
+                }).then((blob) => {
+                onPageActivate('select')
+                const newProfile = Object.assign(profile, {
+                    userId: blob.externalId,
+                    firstName: blob.firstName,
+                    image: blob.image
+                })
+                onProfileAdd(newProfile)
+            }).catch((error) => {
+                var message = error.message
+                if (error.message === "Failed to fetch")
+                    message = "Could not connect to NDEx server " + profile.serverAddress
+                this.setState({failMessage: message})
+            })
+        } else {
+            // adding anonymous account.
+            onPageActivate('select')
+            onProfileAdd(profile)
+        }
     }
-
-
-		if (profile.userName === "" || profile.password === "") {
-			const missingVal = profile.userName === "" ? "username" : "password"
-      this.setState({failMessage: "Must provide a " + missingVal})
-    	return;
-		}
-    const filtered = this.props.profiles.filter((p) => p.serverAddress === profile.serverAddress && p.userName === profile.userName)
-
-    if (filtered.length !== 0) {
-      this.setState({failMessage: "The profile is already logged in."})
-    } else {
-      fetch(profile.serverAddress + "/v2/user?valid=true", {
-        headers: new Headers({
-          "Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
-        })
-      }).then((response) => response.json() )
-			.then((response) => {
-				if (response.errorCode){
-					throw Error(response.message)
-				}
-				return response
-    	}).then((blob) => {
-        onPageActivate('select')
-				const newProfile = Object.assign(profile, {userId: blob.externalId, firstName: blob.firstName, image: blob.image})
-				onProfileAdd(newProfile)
-			}).catch((error) => {
-				var message = error.message
-				if (error.message === "Failed to fetch")
-					message = "Could not connect to NDEx server " + profile.serverAddress
-        this.setState({failMessage: message})
-      })
-    }
-  }
 
   render() {
     const { onPageActivate } = this.props

@@ -75,32 +75,45 @@ class App extends Component {
 	updateProfile(profile){
 		const main = this
 		if (profile.hasOwnProperty('serverAddress') && profile.hasOwnProperty('userName') && !profile.hasOwnProperty('userId')){
-			fetch(profile.serverAddress + "/v2/user?valid=true", {
-				headers: new Headers({
-					"Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
-				})
-			}).then((response) => {
-				if (!response.ok) {
-					throw Error()
-				}
-				return response.json()
-			}).then((blob) => {
-				const newProfile = Object.assign(profile, {userId: blob.externalId, firstName: blob.firstName, image: blob.image})
-    		const profiles = main.state.profiles.filter((p) => p !== profile)
-				profiles.push(newProfile)
-    		main.setState({ profiles, selectedProfile: newProfile })
-    		window.localStorage.setItem('profiles', JSON.stringify(profiles))
-				window.localStorage.setItem('selectedProfile', JSON.stringify(newProfile))
-			}).catch((error) => {
-				alert("Unable to update profile from NDEx. Try logging in again")
-				main.handleProfileLogout(profile)
-				main.handleProfileDelete(profile)
-			})
+		    if ( profile.userName !== "") {
+                fetch(profile.serverAddress + "/v2/user?valid=true", {
+                    headers: new Headers({
+                        "Authorization": 'Basic ' + btoa(profile.userName + ':' + profile.password)
+                    })
+                }).then((response) => {
+                    if (!response.ok) {
+                        throw Error()
+                    }
+                    return response.json()
+                }).then((blob) => {
+                    const newProfile = Object.assign(profile, {
+                        userId: blob.externalId,
+                        firstName: blob.firstName,
+                        image: blob.image
+                    })
+                    const profiles = main.state.profiles.filter((p) => p !== profile)
+                    profiles.push(newProfile)
+                    main.setState({profiles, selectedProfile: newProfile})
+                    window.localStorage.setItem('profiles', JSON.stringify(profiles))
+                    window.localStorage.setItem('selectedProfile', JSON.stringify(newProfile))
+                }).catch((error) => {
+                    alert("Unable to update profile from NDEx. Try logging in again")
+                    main.handleProfileLogout(profile)
+                    main.handleProfileDelete(profile)
+                })
+            } else {
+
+                const profiles = main.state.profiles.filter((p) => p !== profile)
+                profiles.push(profile)
+                main.setState({profiles, selectedProfile: profile})
+                window.localStorage.setItem('profiles', JSON.stringify(profiles))
+                window.localStorage.setItem('selectedProfile', JSON.stringify(profile))
+            }
 		}
 	}
 
 	componentDidMount(){
-		if (this.state.selectedProfile.hasOwnProperty('userName')){
+		if (this.state.selectedProfile.hasOwnProperty('userName') && this.state.selectedProfile.userName !=="" ){
 			this.handleProfileSelect(this.state.selectedProfile)
 		}
     this.loadComponentConfig()

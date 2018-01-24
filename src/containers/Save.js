@@ -154,10 +154,10 @@ class Save extends Component {
   }
 
 	toggleShareUrl = () => {
-		let url = "http://www.ndexbio.org/#/network/" + this.state.uuid
+		let url = this.props.selectedProfile.serverAddress + "/#/network/" + this.state.uuid
 		const able = this.state.shareURL === null ? 'enable' : 'disable'
 		if (!this.state.isPublic){
-			fetch("http://www.ndexbio.org/v2/network/" + this.state.uuid + "/accesskey?action=" + able, {
+			fetch( this.props.selectedProfile.serverAddress + "/v2/network/" + this.state.uuid + "/accesskey?action=" + able, {
 				method: 'PUT',
 				headers: {
 					'Accept': 'application/json',
@@ -167,7 +167,7 @@ class Save extends Component {
 			})
 			.then(resp => {
 				if (!resp.ok){
-					alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
+					alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at " + this.props.selectedProfile.serverAddress +".")
 				}
 				return able === 'disable' ? null : resp.json()})
 			.then(json => {
@@ -180,7 +180,7 @@ class Save extends Component {
 			})
 			.catch((e) => {
 				console.log(e)
-				alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at http://ndexbio.org.")
+				alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at " + this.props.selectedProfile.serverAddress +".")
 			})
 		}else{
 			this.setState({shareURL: url})
@@ -190,7 +190,7 @@ class Save extends Component {
   saveImage(networkId, uuid) {
     const newState = {saving: false, uuid: uuid, success: true}
 		if (this.state.isPublic)
-			newState['shareURL'] = "http://www.ndexbio.org/#/network/" + uuid
+			newState['shareURL'] = this.props.selectedProfile.serverAddress + "/#/network/" + uuid
 		fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
     .then((blob) => {

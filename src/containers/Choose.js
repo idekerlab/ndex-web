@@ -99,7 +99,7 @@ class Choose extends Component {
 		}
     profile = profile || this.props.selectedProfile
 		let headers = { 'Content-Type': 'application/json'}
-    if (profile !== undefined && profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
+    if (profile !== undefined && profile.hasOwnProperty('userName') && profile.userName !== "") {
       headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
     }
 		const address = profile.serverAddress || 'http://ndexbio.org'
@@ -202,30 +202,30 @@ class Choose extends Component {
 		this.handleSearch(newMode)
 	}
 
-	handleGetMyNetworks = (term, profile) => {
-		profile = profile || this.props.selectedProfile
-    if (profile.serverAddress === undefined) {
-      profile = { serverAddress: "http://ndexbio.org" }
-    }
+    handleGetMyNetworks = (term, profile) => {
+        profile = profile || this.props.selectedProfile
+        if (profile.serverAddress === undefined) {
+            profile = {serverAddress: "http://ndexbio.org"}
+        }
 
-		let headers = { 'Content-Type': 'application/json'}
-    if (profile.hasOwnProperty('userName') && profile.hasOwnProperty('password')) {
-      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
+        let headers = {'Content-Type': 'application/json'}
+        if (profile.hasOwnProperty('userName') && profile.userName && profile.hasOwnProperty('password')) {
+            headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
+        }
+        fetch(profile.serverAddress + '/v2/user/' + profile.userId + '/networksummary', {
+            method: 'GET',
+            headers: new Headers(headers),
+        }).then((response) => {
+            return response.json()
+        }).then((networks) => {
+            this.setState({numNetworks: networks.length})
+            this.populate(networks)
+        })
+            .catch((error) => {
+                this.setState({networks: [], numNetworks: 0})
+                alert("Unable to retrieve your networks from the NDEx server. Check your connection and try again. ")
+            })
     }
-    fetch(profile.serverAddress + '/v2/user/' + profile.userId + '/networksummary', {
-      method: 'GET',
-      headers: new Headers(headers),
-    }).then((response) => {
-			return response.json()
-    }).then((networks) => {
-			this.setState({numNetworks: networks.length})
-    	this.populate(networks)
-		})
-    .catch((error) => {
-			this.setState({networks : [], numNetworks: 0})
-      alert("Unable to retrieve your networks from the NDEx server. Check your connection and try again. ")
-      })
-	}
 
   render() {
     const {
