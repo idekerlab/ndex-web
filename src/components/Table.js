@@ -53,7 +53,7 @@ const Table = ({items, onNetworkDownload}) => {
                               return <td key={index} className='date'
                                          title={new Date(item[key]).toString()}>{Moment(item[key]).format("MM/DD/YY hh:mm A")}</td>
                           } else if (key === "name") {
-                              return <td key={index} className='name' title={item['description']}>{item[key]}</td>
+                              return <td key={index} className='name' /*title={item['description']}*/>{item[key]}</td>
                           }
                           return <td key={index}>{item[key]}</td>
                       })

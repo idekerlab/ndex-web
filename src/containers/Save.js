@@ -268,7 +268,8 @@ class Save extends Component {
       handleProfileLogout
     } = this.props
 
-		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') || (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
+		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') ||
+             (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
 
 		const sharable = this.state.isPublic || this.state.shareURL !== null
 
