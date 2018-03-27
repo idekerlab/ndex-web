@@ -144,6 +144,11 @@ class Choose extends Component {
         }
         if (accessKey) {
             payload['accessKey'] = accessKey
+            if ( server != this.props.selectedProfile.serverAddress ) {
+                delete  payload['username'];
+                delete  payload['password'];
+            }
+
         }
         fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks', {
             method: 'POST',

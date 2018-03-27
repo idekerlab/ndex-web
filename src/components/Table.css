@@ -65,7 +65,7 @@
 }
 
 .Table[title]:hover:after {
-  width: 250px;
+  max-width: 250px;
 }
 /*
 @media (max-width: 1250px) {

@@ -32,24 +32,29 @@ class Browser extends Component {
   }
 
   sort(items, ascending) {
+		const flag = ascending === 'descending'? -1 : 1;
 		if (this.state.sort !== 'relevance'){
 			items.sort((item1, item2) => {
 				let a = item1[this.state.sort]
 				let b = item2[this.state.sort]
+
 				if (a === b) {
 					if (item1._id > item2._id) {
-						return -1
+						return 1 * flag
 					} else {
-						return 1
+						return -1 * flag
 					}
-				} else if (a > b) {
-					return -1
+				} else 	if ( typeof a === 'string') {
+					return a.localeCompare(b) * flag;
 				} else {
-					return 1
-				}
+                    if (a > b) {
+                        return 1 * flag
+                    } else {
+                        return -1 * flag
+                    }
+                }
 			})
-			if (ascending === 'ascending')
-				items = items.reverse()
+
 		}
 
     return items
