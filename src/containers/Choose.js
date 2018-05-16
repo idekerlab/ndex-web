@@ -48,10 +48,13 @@ class Choose extends Component {
 		}
 	}
 
-	getNetworkFromShareURL = (url) => {
+	getNetworkFromShareURL = (rawURL) => {
 		const main = this
+        if (!rawURL.trim().toLowerCase().startsWith('http'))
+            return null;
+		var welldoneURL = rawURL.trim().toLowerCase().replace(/\s/g, '');
 		var myRegexp = /^(https?:\/\/[^#]*)\/#\/network\/([^?]*)(\?accesskey=(.*))?$/g;
-		var match = myRegexp.exec(url);
+		var match = myRegexp.exec(welldoneURL);
 		if (match === null){
 			this.setState({numNetworks: 0})
 			return null
@@ -93,33 +96,34 @@ class Choose extends Component {
 		return undefined
 	}
 
-	handleSearchTerm = (term = "", profile) => {
-		if (this.getNetworkFromShareURL(term)){
-			return
-		}
-    profile = profile || this.props.selectedProfile
-		let headers = { 'Content-Type': 'application/json'}
-    if (profile !== undefined && profile.hasOwnProperty('userName') && profile.userName !== "") {
-      headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
-    }
-		const address = profile.serverAddress || 'http://ndexbio.org'
+    handleSearchTerm = (term = "", profile) => {
+        term = term.trim()
+        if (this.getNetworkFromShareURL(term)) {
+            return
+        }
+        profile = profile || this.props.selectedProfile
+        let headers = {'Content-Type': 'application/json'}
+        if (profile !== undefined && profile.hasOwnProperty('userName') && profile.userName !== "") {
+            headers['Authorization'] = 'Basic ' + btoa(profile.userName + ':' + profile.password)
+        }
+        const address = profile.serverAddress || 'http://ndexbio.org'
 
-    fetch(address + '/v2/search/network?size=' + RESULT_COUNT, {
-      method: 'POST',
-      body: JSON.stringify({ searchString: term }),
-      headers: new Headers(headers),
-    }).then((response) => {
-      return response.json()
-    }).then((blob) => {
-      this.setState({numNetworks: blob.numFound})
-      return blob.networks
-    }).then((networks) => {
-      this.populate(networks)
-		}).catch((error) => {
-      this.setState({networks : [], numNetworks: 0})
-      alert("CyNDEx2 was unable to connect to the NDEx server. Check your connection and try again. If the problem persists, contact the NDEx team")
-    })
-  }
+        fetch(address + '/v2/search/network?size=' + RESULT_COUNT, {
+            method: 'POST',
+            body: JSON.stringify({searchString: term}),
+            headers: new Headers(headers),
+        }).then((response) => {
+            return response.json()
+        }).then((blob) => {
+            this.setState({numNetworks: blob.numFound})
+            return blob.networks
+        }).then((networks) => {
+            this.populate(networks)
+        }).catch((error) => {
+            this.setState({networks: [], numNetworks: 0})
+            alert("CyNDEx2 was unable to connect to the NDEx server. Check your connection and try again. If the problem persists, contact the NDEx team")
+        })
+    }
 
     handleDownloadNetwork = (networkId, accessKey, server) => {
 
@@ -144,7 +148,7 @@ class Choose extends Component {
         }
         if (accessKey) {
             payload['accessKey'] = accessKey
-            if ( server != this.props.selectedProfile.serverAddress ) {
+            if ( server !== this.props.selectedProfile.serverAddress ) {
                 delete  payload['username'];
                 delete  payload['password'];
             }
