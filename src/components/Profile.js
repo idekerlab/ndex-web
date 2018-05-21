@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import './Profile.css'
 
-import defaultProfilePic from '../default-profile.png' 
+import defaultProfilePic from '../default-profile.png'
 class Profile extends Component {
 
   constructor() {

@@ -2,6 +2,7 @@
   "name": "ndex",
   "version": "0.1.0",
   "private": true,
+  "homepage" : "http://cyndex.ndexbio.org/0.1.2",
   "dependencies": {
     "copy-to-clipboard": "^3.0.6",
     "js-base64": "^2.4.0",

@@ -9,7 +9,20 @@ import Waiting from './components/Waiting'
 class App extends Component {
 
   constructor() {
-    super()
+    super();
+    let params = window.location.search;
+    if (params !== undefined) {
+        params.substr(1).split("&").forEach(function(part) {
+            let item = part.split('=');
+            if ( item[0] === 'cyrestport') {
+                let restport = parseInt(item[1], 10);
+                if (!isNaN(restport))
+                    window.restPort = restport;
+            } else if (item[0] == 'mode') {
+                window.cyndexMode=item[1];
+            }
+        });
+    }
     this.state = {
       component: 'loading',
       parameters: {},
@@ -28,7 +41,7 @@ class App extends Component {
           })
         } else {
           this.setState({
-            component: resp.data.widget,
+            component:  window.cyndexMode,//resp.data.widget,
             parameters: resp.data.parameters
           })
         }
@@ -126,7 +139,7 @@ class App extends Component {
             choose: Choose,
             save: Save,
             cyrestError: CyRESTError
-        }
+        };
         const profileActions = {
             handleProfileSelect: this.handleProfileSelect,
             handleProfileAdd: this.handleProfileAdd,
