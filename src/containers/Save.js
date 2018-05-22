@@ -374,15 +374,15 @@ class Save extends Component {
               />
             </div>
             <div className="Save-visibility">
-              <h3>Save as a New Network?</h3>
+              <h3>Update Existing?</h3>
               {this.state.updatable ?
               <input
                  type="checkbox"
-                 value={!this.state.overwrite}
-                 defaultChecked={!this.state.overwrite}
+                 value={this.state.overwrite}
+                 defaultChecked={this.state.overwrite}
                  onChange={(e) => this.handleChangeOverwrite(e)}
               /> :
-              <input type="checkbox" defaultChecked={true} disabled/>}
+              <input type="checkbox" defaultChecked={false} disabled/>}
             </div>
 
           </div>

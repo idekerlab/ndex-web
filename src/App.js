@@ -18,7 +18,7 @@ class App extends Component {
                 let restport = parseInt(item[1], 10);
                 if (!isNaN(restport))
                     window.restPort = restport;
-            } else if (item[0] == 'mode') {
+            } else if (item[0] === 'mode') {
                 window.cyndexMode=item[1];
             }
         });
@@ -41,7 +41,7 @@ class App extends Component {
           })
         } else {
           this.setState({
-            component:  window.cyndexMode,//resp.data.widget,
+            component:  window.cyndexMode || resp.data.widget,
             parameters: resp.data.parameters
           })
         }
