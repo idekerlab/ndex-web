@@ -11,6 +11,7 @@ class App extends Component {
   constructor() {
     super();
     let params = window.location.search;
+		let currentSuid = "current"
     if (params !== undefined) {
         params.substr(1).split("&").forEach(function(part) {
             let item = part.split('=');
@@ -20,11 +21,15 @@ class App extends Component {
                     window.restPort = restport;
             } else if (item[0] === 'mode') {
                 window.cyndexMode=item[1];
-            }
+            } else if (item[0] === 'suid'){
+							  currentSuid = item[1]
+						}
         });
     }
     this.state = {
       component: 'loading',
+			errors: [],
+			suid: currentSuid,
       parameters: {},
       profiles: JSON.parse(window.localStorage.getItem('profiles')) || [],
       selectedProfile: JSON.parse(window.localStorage.getItem('selectedProfile')) || {},
@@ -36,11 +41,16 @@ class App extends Component {
       .then((blob) => blob.json())
       .then((resp) => {
         if (resp.errors.length !== 0) {
+					const errors = resp.errors.map((v) => {
+						return v.message;
+					});
           this.setState({
-            component: 'error'
+            component: 'error',
+						errors: errors,
           })
         } else {
-          this.setState({
+          resp.data.parameters['suid'] = this.state.suid
+					this.setState({
             component:  window.cyndexMode || resp.data.widget,
             parameters: resp.data.parameters
           })
@@ -133,6 +143,7 @@ class App extends Component {
 	}
 
     render() {
+
         const components = {
             error: Error,
             loading: Loading,
@@ -150,6 +161,7 @@ class App extends Component {
         return (
             <div className="App">
                 <Component
+										errors={this.state.errors}
                     profiles={this.state.profiles}
                     selectedProfile={this.state.selectedProfile}
                     {...this.state.parameters}
@@ -161,7 +173,8 @@ class App extends Component {
 
 }
 
-const Error = () => <Waiting text="AN ERROR HAS OCCURED. PLEASE RESTART CYTOSCAPE, REINSTALL THE APP, OR CONTACT THE APP DEVELOPER."/>
+const Error = (props) => <Waiting text={props.errors ? "Unable to connect to CyNDEx2 app. Errors:\n" + props.errors.join(". ") :
+		"An unknown error has occurred. Please restart Cytoscape, reinstall the app, or contact the app developers."}/>
 
 const Loading = () => <Waiting text="Loading... this shoudn't take long, please restart the application if nothing appears after a minute."/>
 

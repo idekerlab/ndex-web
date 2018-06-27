@@ -12,6 +12,7 @@ class Save extends Component {
     super(props)
     const hydrate = (field) => this.props[field] || ''
     this.state = {
+			currentSuid: hydrate('suid'),
       name: hydrate('name'),
 			uuid: hydrate('uuid'),
       author: hydrate('author'),
@@ -29,6 +30,7 @@ class Save extends Component {
 			overwrite: false,
       success: false,
 			shareURL: null,
+			errorMessage: null,
     }
 		window.saver = this
 		this.networkData = {}
@@ -67,22 +69,36 @@ class Save extends Component {
 
 	loadData(){
 		const main = this;
-		fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/current')
+		let saveType = this.state.saveType;
+		fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/' + main.state.currentSuid)
 		.then((resp) => resp.json())
 		.then((resp) => {
-			let newData = {
-				"collection": resp['data']['currentRootNetwork']
-			}
-			resp['data']['members'].forEach((member) => {
-				if (member['suid'] === resp['data']['currentNetworkSuid']){
-					newData['network'] = member
+			if (resp.errors.length > 0){
+				const errs = resp['errors'].map((v) => v['message']);
+				throw new Error(errs.join(". "));
+			}else{
+				let newData = {
+					"collection": resp['data']['currentRootNetwork'],
+					errorMessage: null,
+					saveType: "collection",
 				}
-			})
-			main.networkData = newData
+				saveType = "collection";
+				resp['data']['members'].forEach((member) => {
+					if (member['suid'] === resp['data']['currentNetworkSuid']){
+						newData['network'] = member
+						newData['saveType'] = 'network'
+						saveType = 'network'
+					}
+				})
+				main.networkData = newData
+			}
 		}).then(() => {
-			main.getAttributes()
+			main.getAttributes(saveType)
 			main.checkPermissions(main.props.selectedProfile)
-		})
+		}).catch((errs) => {
+			let errorMessage = "Error loading network information. " + errs;
+			main.setState({errorMessage})
+		});
 	}
 
 	componentWillMount(){
@@ -272,7 +288,9 @@ class Save extends Component {
              (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
 
 		const sharable = this.state.isPublic || this.state.shareURL !== null
-
+		if (this.state.errorMessage !== null){
+			return <Waiting text={this.state.errorMessage}/> 
+		}
 		return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
