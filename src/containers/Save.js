@@ -209,12 +209,15 @@ class Save extends Component {
     const newState = {saving: false, uuid: uuid, success: true}
 		if (this.state.public){
 			newState.shareURL = this.props.selectedProfile.serverAddress + "/#/network/" + uuid
+		} else {
+      this.setState(newState)
+		  return
 		}
-		console.log(newState);
 		fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
     .then((blob) => {
-      fetch('http://v1.image-uploader.cytoscape.io/' + uuid, {
+      fetch('http://v1.imaging.cytoscape.io/public/' + uuid, {
+			// fetch('http://localhost:8080/public/' + uuid, {
         method: 'POST',
         headers: {
           'Content-Type': 'image/png',
@@ -227,10 +230,12 @@ class Save extends Component {
           }
 					this.setState(newState)
       }).catch((error) => {
+				console.log(error)
 //        alert("Your network was saved, but CyNDEx2 was unable to upload a network image.")
         this.setState(newState)
       });
     }).catch((error) => {
+				console.log(error)
 //      alert("Your network was saved, but an image could not be generated... the old image will be used instead.")
       this.setState(newState)
     })
