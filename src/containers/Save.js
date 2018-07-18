@@ -29,6 +29,7 @@ class Save extends Component {
 			overwrite: false,
       success: false,
 			shareURL: null,
+			errorMessage: null,
     };
     window.saver = this;
     this.networkData = {}
@@ -94,7 +95,9 @@ class Save extends Component {
 	}
 
   closeWindow() {
-  	window.frame.setVisible(false);
+		if (window.frame){
+  		window.frame.setVisible(false);
+		}
 	}
 
   onSave() {
@@ -152,7 +155,12 @@ class Save extends Component {
           alert("Error saving: " + resp.errors[0].message || "Unknown")
           this.setState({saving: false})
         } else {
-          this.saveImage(resp.data.suid, resp.data.uuid)
+          //this.saveImage(resp.data.suid, resp.data.uuid)
+					var shareURL = null;
+					if (this.state.public){
+						shareURL = this.props.selectedProfile.serverAddress + "/#/network/" + resp.data.uuid
+					}
+					this.setState({saving:false, shareURL: shareURL, uuid: resp.data.uuid, success: true})
         }
       })
 
@@ -161,7 +169,7 @@ class Save extends Component {
 	toggleShareUrl = () => {
 		let url = this.props.selectedProfile.serverAddress + "/#/network/" + this.state.uuid;
 		const able = this.state.shareURL === null ? 'enable' : 'disable';
-		if (!this.state.isPublic){
+		if (!this.state.public){
 			fetch( this.props.selectedProfile.serverAddress + "/v2/network/" + this.state.uuid + "/accesskey?action=" + able, {
 				method: 'PUT',
 				headers: {
@@ -193,10 +201,11 @@ class Save extends Component {
 	};
 
   saveImage(networkId, uuid) {
-    const newState = {saving: false, uuid: uuid, success: true};
-    if (this.state.isPublic)
-        newState['shareURL'] = this.props.selectedProfile.serverAddress + "/#/network/" + uuid;
-    fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
+    const newState = {saving: false, uuid: uuid, success: true}
+		if (this.state.public){
+			newState.shareURL = this.props.selectedProfile.serverAddress + "/#/network/" + uuid
+		}
+		fetch('http://localhost:' + (window.restPort || '1234') + '/v1/networks/' + networkId + '/views/first.png')
     .then((png) => png.blob())
     .then((blob) => {
       fetch('http://v1.image-uploader.cytoscape.io/' + uuid, {
@@ -278,8 +287,11 @@ class Save extends Component {
 		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') ||
              (this.state.public && (!this.state.overwrite) && (!this.state.name || !this.state.description || !this.state.version));
 
-		const sharable = this.state.isPublic || this.state.shareURL !== null;
-
+		const sharable = !this.state.public && this.state.shareURL !== null
+		if (this.state.errorMessage !== null && this.state.errorMessage !== undefined){
+			console.log(this.state.errorMessage)
+			return <Waiting text={this.state.errorMessage}/>
+		}
 		return (
       <div className="Save">
         {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
@@ -291,6 +303,14 @@ class Save extends Component {
 					<div className="SaveModal col-sm-12">
 						<h2>Network successfully saved to NDEx!</h2>
 						<h5 style={{textAlign: 'center'}}>UUID: {this.state.uuid}</h5>
+			{this.state.public ?
+					<div>
+						<h4><strong>Network is publicly accessible</strong></h4>
+						<h5>Share your network on NDEx with the link below:</h5>
+							<input type="text" disabled className="form-control" onChange={() => {}} value={this.state.shareURL}/>
+					</div>
+				:
+					<div>
 						<h4><strong>Share With Others</strong></h4>
 						<h5>Anyone with the link can view this network</h5>
 						<div>
@@ -304,13 +324,14 @@ class Save extends Component {
 							<span style={{color:"red"}}>Disabled</span>
 							}
 						</h5>
-						{!this.state.isPublic && <button className="btn btn-default ng-binding" onClick={() => this.toggleShareUrl()}>
+						{!this.state.public && <button className="btn btn-default ng-binding" onClick={() => this.toggleShareUrl()}>
 							{(sharable ? "Disable" : "Enable") + " Share URL"}
 						</button>}
-						{sharable &&
+				</div>
+			}
 						<button id="copyButtonId" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
 							Copy URL
-						</button>}
+						</button>
 						<button id="Save-back" className="btn btn-default" onClick={() => {
 							this.setState({success: false, shareURL: null, saving: false})
 						}}>Go Back</button>
