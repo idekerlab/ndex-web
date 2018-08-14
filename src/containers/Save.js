@@ -10,7 +10,7 @@ class Save extends Component {
 
   constructor(props) {
     super(props)
-    const hydrate = (field) => this.props[field] || ''
+    const hydrate = (field) => this.props[field] || '';
     this.state = {
 			currentSuid: hydrate('suid'),
       name: hydrate('name'),
@@ -31,9 +31,9 @@ class Save extends Component {
       success: false,
 			shareURL: null,
 			errorMessage: null,
-    }
-		window.saver = this
-		this.networkData = {}
+    };
+    window.saver = this;
+    this.networkData = {}
   }
 
 	checkPermissions = (profile, saveType) => {
@@ -61,7 +61,7 @@ class Save extends Component {
 		} else {
 				this.setState({updatable: false})
 		}
-	}
+	};
 
 	componentWillReceiveProps(props) {
 		this.checkPermissions(props.selectedProfile)
@@ -120,11 +120,8 @@ class Save extends Component {
       serverAddress,
       userName,
       password,
-    } = this.props.selectedProfile
-    let method = 'POST'
-    if (this.state.overwrite) {
-      method = 'PUT'
-    }
+    } = this.props.selectedProfile;
+
     const metadata = {
       name: this.state.name,
       author: this.state.author,
@@ -135,22 +132,30 @@ class Save extends Component {
       rightsHolder: this.state.rightsHolder,
       reference: this.state.reference,
       description: this.state.description,
-    }
-    const payload = JSON.stringify({
+    };
+
+    const payloadObj = {
         username: userName,
         password: password,
         serverUrl: serverAddress + '/v2',
-        metadata: metadata,
-        isPublic: this.state.public,
-		})
+        metadata: metadata
+    };
 
-		const suid = this.networkData[this.state.saveType]['suid']
+    let method = 'POST';
+    if (this.state.overwrite) {
+          method = 'PUT'
+    } else {
+          payloadObj.isPublic = this.state.public;
+    }
+    const payload = JSON.stringify(payloadObj);
+
+    const suid = this.networkData[this.state.saveType]['suid'];
 
     if (userName === undefined || userName === "") {
       alert("You must be logged with your NDEx username to save a network.")
       return
     }
-    this.setState({ saving: true })
+    this.setState({ saving: true });
     fetch('http://localhost:' + (window.restPort || '1234') + '/cyndex2/v1/networks/' + suid, {
       method: method,
       headers: {
@@ -165,15 +170,20 @@ class Save extends Component {
           alert("Error saving: " + resp.errors[0].message || "Unknown")
           this.setState({saving: false})
         } else {
-          this.saveImage(resp.data.suid, resp.data.uuid)
+          //this.saveImage(resp.data.suid, resp.data.uuid)
+					var shareURL = null;
+					if (this.state.public){
+						shareURL = this.props.selectedProfile.serverAddress + "/#/network/" + resp.data.uuid
+					}
+					this.setState({saving:false, shareURL: shareURL, uuid: resp.data.uuid, success: true})
         }
       })
 
   }
 
 	toggleShareUrl = () => {
-		let url = this.props.selectedProfile.serverAddress + "/#/network/" + this.state.uuid
-		const able = this.state.shareURL === null ? 'enable' : 'disable'
+		let url = this.props.selectedProfile.serverAddress + "/#/network/" + this.state.uuid;
+		const able = this.state.shareURL === null ? 'enable' : 'disable';
 		if (!this.state.public){
 			fetch( this.props.selectedProfile.serverAddress + "/v2/network/" + this.state.uuid + "/accesskey?action=" + able, {
 				method: 'PUT',
@@ -192,18 +202,18 @@ class Save extends Component {
 				if (!json){
 					this.setState({shareURL: null})
 				}else if (json.accessKey){
-					url += "?accesskey=" + json.accessKey
+					url += "?accesskey=" + json.accessKey;
 					this.setState({shareURL: url})
 				}
 			})
 			.catch((e) => {
-				console.log(e)
+				console.log(e);
 				alert("CyNDEx2 was unable to fetch the access key for your network.\nTo enable/disable the shared URL, please visit the NDEx website at " + this.props.selectedProfile.serverAddress +".")
 			})
 		}else{
 			this.setState({shareURL: url})
 		}
-	}
+	};
 
   saveImage(networkId, uuid) {
     const newState = {saving: false, uuid: uuid, success: true}
@@ -245,12 +255,14 @@ class Save extends Component {
     this.setState({ name: e.target.value })
   }
 
-  handleChangeOverwrite(e) {
-    this.setState({ overwrite: !this.state.overwrite })
+  handleChangeOverwrite(evt) {
+    this.setState({ overwrite: evt.target.checked });
+    if (evt.target.checked)
+        this.setState( { public: false});
   }
 
-  handleChangeVisibility(e) {
-    this.setState({ public: !this.state.public })
+  handleChangeVisibility(evt) {
+    this.setState({ public: evt.target.checked })
   }
 
 
@@ -258,16 +270,16 @@ class Save extends Component {
     return (e) => {
       let newState = {
         [field]: e.target.value
-      }
+      };
       this.setState(newState)
     }
   }
 
 	getAttributes = (saveType) => {
-		saveType = saveType || this.state.saveType
+		saveType = saveType || this.state.saveType;
 		if (!this.networkData.hasOwnProperty(saveType))
-			return {}
-		const net = this.networkData[saveType]
+			return {};
+		const net = this.networkData[saveType];
 		this.setState({
 			author: net['props']['author'] || '',
 			organism: net['props']['organism'] || '',
@@ -279,9 +291,9 @@ class Save extends Component {
 			description: net['props']['description'] || '',
 			name: net['name'] || '',
 			saveType: saveType,
-		})
+		});
 		this.checkPermissions(this.props.selectedProfile, saveType)
-	}
+	};
 
   render() {
     const {
@@ -291,13 +303,14 @@ class Save extends Component {
       handleProfileSelect,
       handleProfileDelete,
       handleProfileLogout
-    } = this.props
+    } = this.props;
 
 		const disableSave = !this.props.selectedProfile.hasOwnProperty('serverAddress') ||
-             (this.state.public && (!this.state.name || !this.state.description || !this.state.version))
+             (this.state.public && (!this.state.overwrite) && (!this.state.name || !this.state.description || !this.state.version));
 
 		const sharable = !this.state.public && this.state.shareURL !== null
-		if (this.state.errorMessage !== null){
+		if (this.state.errorMessage !== null && this.state.errorMessage !== undefined){
+			console.log(this.state.errorMessage)
 			return <Waiting text={this.state.errorMessage}/>
 		}
 		return (
@@ -315,7 +328,7 @@ class Save extends Component {
 					<div>
 						<h4><strong>Network is publicly accessible</strong></h4>
 						<h5>Share your network on NDEx with the link below:</h5>
-							<input type="text" className="form-control" onChange={() => {}} value={this.state.shareURL}/>
+							<input type="text" disabled className="form-control" onChange={() => {}} value={this.state.shareURL}/>
 					</div>
 				:
 					<div>
@@ -399,18 +412,20 @@ class Save extends Component {
               value={this.state.description}
               onChange={this.handleFieldChange('description')}
               label="Description"
-							required={this.state.public}
+              required={this.state.public}
             />
-						<div className="Save-visibility">
-              <h3>Save as Public?</h3>
+              <div className="Save-visibility">
+              <h3>SAVE AS PUBLIC?</h3>
               <input
                  type="checkbox"
                  value={this.state.public}
+                 disabled = {this.state.overwrite}
                  onChange={(e) => this.handleChangeVisibility(e)}
               />
+
             </div>
             <div className="Save-visibility">
-              <h3>Update Existing?</h3>
+              <h3>UPDATE EXISTING NETWORK?</h3>
               {this.state.updatable ?
               <input
                  type="checkbox"
@@ -451,13 +466,13 @@ const LabelField = ({label, value, onChange, required}) => (
     <label>{label.toUpperCase() + (required ? "*" : "")}</label>
     <input className={required === true ? "required" : ""} type="text" value={value} onChange={onChange} placeholder={label + "..."}/>
   </div>
-)
+);
 
 const TextareaField = ({label, value, onChange, required}) => (
   <div className="Save-textareafield">
     <label>{label.toUpperCase() + (required ? "*" : "")}</label>
     <textarea className={required === true ? "required" : ""} value={value} onChange={onChange} placeholder={"Enter your " + label.toLowerCase() + " here..."}/>
   </div>
-)
+);
 
 export default Save
