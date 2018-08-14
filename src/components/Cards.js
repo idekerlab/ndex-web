@@ -2,8 +2,7 @@ import React from 'react';
 import './Cards.css'
 
 import profileBadge from '../default-profile.png'
-import no_image from "../no_network_image.png"
-
+import noNetworkImage from '../no_network_image.png'
 //import copy from 'copy-to-clipboard'
 
 const Cards = ({items, onNetworkDownload}) => (
@@ -51,14 +50,8 @@ const Card = ({id, accessKey, name, description, owner, visibility, updated, nod
         </div>
       </div>
       <img className="Card-image" src={getImage(id)} onError={(err) => {
-        if (err.target.src === no_image){
-					err.target.src = no_image;
-					err.target.onError=null;
-				}else{
-					err.target.src= no_image;
-        	err.target.onError="this.src=''";
-        }
-			}
+					err.target.src=noNetworkImage;
+				}
       }/>
       <div className="Card-content">
         <h5 className="Card-content-title">

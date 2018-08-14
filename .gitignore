@@ -8,6 +8,7 @@
 
 # production
 /build
+/build.tar
 
 # misc
 .DS_Store

@@ -66,7 +66,7 @@ const ProfileBadge = ({profile, onClick}) => (
     onMouseDown={onClick}
   >
     <img
-      alt="ProfileBadge"
+      alt="Badge"
       src={profile.image || defaultProfilePic}
     />
     <div className="ProfileBadge-textblock">
