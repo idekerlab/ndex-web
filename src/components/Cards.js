@@ -2,12 +2,14 @@ import React from 'react';
 import './Cards.css'
 
 import profileBadge from '../default-profile.png'
-import noNetworkImage from '../no_network_image.png'
+const noNetworkImage = process.env.PUBLIC_URL + '/no-network-image.png'
 //import copy from 'copy-to-clipboard'
+
 
 const Cards = ({items, onNetworkDownload}) => (
   <div className="Cards">
     {items.map((item) => (
+			//eslint-disable-next-line
       <Card
         key={item._id}
         accessKey={item.accessKey}
@@ -46,13 +48,15 @@ const Card = ({id, accessKey, name, description, owner, visibility, updated, nod
 
         <div className="Card-header-group">
           <p>{visibility}</p>
-	{/*<img className="Card-clipboard-img" onClick={(e) => copyFunc(id)} title="Copy NDEx UUID to clipboard" alt="NDEx UUID" src="https://clipboardjs.com/assets/images/clippy.svg"/>*/}
         </div>
       </div>
-      <img className="Card-image" src={getImage(id)} onError={(err) => {
+      <img className="Card-image"
+				src={getImage(id)} onError={(err) => {
 					err.target.src=noNetworkImage;
 				}
-      }/>
+				}
+				alt="Preview unavailable"
+      />
       <div className="Card-content">
         <h5 className="Card-content-title">
           {name}

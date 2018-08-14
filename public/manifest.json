@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CyNDEx2 Webapp",
+  "name": "CyNDEx2 Webapp for Cytoscape App",
   "icons": [
     {
       "src": "favicon.ico",
