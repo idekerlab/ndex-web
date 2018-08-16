@@ -433,8 +433,7 @@ class Save extends Component {
                  value={this.state.overwrite}
                  defaultChecked={this.state.overwrite}
                  onChange={(e) => this.handleChangeOverwrite(e)}
-              /> :
-              <input type="checkbox" defaultChecked={false} disabled/>}
+              />
             </div>
 						}
           </div>
