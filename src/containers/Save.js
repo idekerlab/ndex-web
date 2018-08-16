@@ -315,14 +315,14 @@ class Save extends Component {
 		}
 		return (
       <div className="Save">
-        {this.state.saving ? <Waiting text={"Saving network " + this.props.name + " to NDEx..."}/> : null}
+        {this.state.saving ? <Waiting text={"Saving " + this.state.saveType + " " + this.state.name + " to NDEx..."}/> : null}
 				<ModalDialog
 					show={this.state.success}
 					containerStyle={{width: '50%', minWidth: '400px'}}
 					closeOnOuterClick={true}
 					onClose={() => (this.closeWindow())}>
 					<div className="SaveModal col-sm-12">
-						<h2>Network successfully saved to NDEx!</h2>
+						<h2>Successfully saved {this.state.saveType} to NDEx!</h2>
 						<h5 style={{textAlign: 'center'}}>UUID: {this.state.uuid}</h5>
 			{this.state.public ?
 					<div>
@@ -350,9 +350,9 @@ class Save extends Component {
 						</button>}
 				</div>
 			}
-						<button id="copyButtonId" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
+			{ sharable && <button id="copyButtonId" className="btn btn-default ng-isolate-scope" onClick={() => copy(this.state.shareURL)}>
 							Copy URL
-						</button>
+						</button> }
 						<button id="Save-back" className="btn btn-default" onClick={() => {
 							this.setState({success: false, shareURL: null, saving: false})
 						}}>Go Back</button>
@@ -368,7 +368,8 @@ class Save extends Component {
             onProfileLogout={handleProfileLogout}
           />
         </Navbar>
-        <div className="Save-entryfields">
+        {this.state.saveType === "network" ?
+        	<div className="Save-entryfields">
           <div className="Save-left">
             <LabelField
               value={this.state.author}
@@ -424,9 +425,9 @@ class Save extends Component {
               />
 
             </div>
+            {this.state.updatable &&
             <div className="Save-visibility">
               <h3>UPDATE EXISTING NETWORK?</h3>
-              {this.state.updatable ?
               <input
                  type="checkbox"
                  value={this.state.overwrite}
@@ -435,9 +436,14 @@ class Save extends Component {
               /> :
               <input type="checkbox" defaultChecked={false} disabled/>}
             </div>
-
+						}
           </div>
         </div>
+        :
+        <div>
+          <h2>Property editing is disabled for collections</h2>
+        </div>
+      }
 			<div className="Save-actionbar">
           <h5 className="Save-actionbar-label">
 			{this.state.saveType.charAt(0).toUpperCase() + this.state.saveType.slice(1)} Name:
